@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+</head>
+
+<body>
+    <div id="example"></div>
+    <hr />
+    <div id="example2"></div>
+    <hr />
+    <div id="example3"></div>
+
+    <script src="lib/0.14.7/react.min.js"></script>
+    <script src="lib/0.14.7/react-dom.min.js"></script>
+    <script src="lib/babel-core/browser.min.js"></script>
+
+    <script type="text/babel">
+
+        var
+            Cls01 = React.createClass( {
+                handClick : function() {
+                    console.log( "from Cls01" );
+                },
+                render : function() {
+                    return <div onClick={this.handClick}>第一个测试，点我啊！</div>
+                }
+            } ),
+            Cls02 = React.createClass( {
+                handClick : function() {
+                    console.log( "from Cls02" );
+                },
+                render : function() {
+                    return <Cls01 onClick={this.handClick} />
+                }
+            } ),
+            Cls03 = React.createClass( {
+                handClick : function() {
+                    console.log( "from Cls03" );
+                },
+                render : function() {
+                    return <Cls02 onClick={this.handClick} />
+                }
+            } );
+
+        ReactDOM.render(
+            <Cls03 />,
+            document.getElementById( "example" )
+        );
+    </script>
+
+    <script type="text/babel">
+
+        // mixins 不能存在重复节点，否则报错
+
+        var
+            ClsEx01 = {
+                componentWillMount: function() {
+                    console.log( "componentWillMount from ClsEx01" );
+                }
+                // , componentDidMount : function() {
+                //     console.log( "componentDidMount from ClsEx01" );
+                // }
+                // , handClick : function() {
+                //     console.log( "handClick from ClsEx01" );
+                // }
+            },
+            ClsEx02 = {
+                // componentWillMount: function() {
+                //     console.log( "componentWillMount from ClsEx02" );
+                // }
+                // , componentDidMount : function() {
+                //     console.log( "componentDidMount from ClsEx02" );
+                // }
+                handClick : function() {
+                    console.log( "handClick from ClsEx02" );
+                }
+            },
+            ClsEx03 = React.createClass( {
+                mixins : [ ClsEx02, ClsEx01 ],
+                componentDidMount : function() {
+                    console.log( "componentDidMount from ClsEx03" );
+                }
+                // , handClick : function() {
+                //     console.log( "handClick from ClsEx03" );
+                // }
+                , render : function() {
+                    return <div onClick={this.handClick}>第二个测试，点我啊！</div>
+                }
+            } );
+
+        ReactDOM.render(
+            <ClsEx03 />,
+            document.getElementById( "example2" )
+        );
+    </script>
+
+    <script type="text/babel">
+    // var
+    //     SunCls = React.createClass( {
+    //         handClick : function() {
+    //             console.log( "handClick from SunCls" );
+    //         }
+    //         , render : function() {
+    //             return (
+    //                 <div onClick={this.handClick}>孙组件，点击我！</div>
+    //             );
+    //         }
+    //     } ),
+    //     ChildCls = React.createClass( {
+    //         handClick : function() {
+    //             console.log( "handClick from ChildCls" );
+    //         }
+    //         , render : function() {
+    //             return (
+    //                 <div onClick={this.handClick}>
+    //                     <SunCls />
+    //                 </div>
+    //             );
+    //         }
+    //     } ),
+    //     ParentCls = React.createClass( {
+    //         handClick : function() {
+    //             console.log( "handClick from ParentCls" );
+    //         }
+    //         , render : function() {
+    //             return (
+    //                 <div onClick={this.handClick}>
+    //                     <ChildCls />
+    //                 </div>
+    //             );
+    //         }
+    //     } );
+    //
+    // ReactDOM.render(
+    //     <ParentCls />,
+    //     document.body
+    // );
+    </script>
+</body>
+</html>

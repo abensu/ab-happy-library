@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+</head>
+
+<body>
+    <div id="example"></div>
+
+    <script src="lib/0.14.7/react.js"></script>
+    <script src="lib/0.14.7/react-dom.js"></script>
+    <script src="lib/babel-core/browser.min.js"></script>
+
+    <script type="text/babel">
+        var
+            App = React.createClass( {
+
+                getInitialState : function() {
+
+                    return { mark : true };
+                }
+                , handleClick : function() {
+
+                    this.setState( { mark : !this.state.mark } );
+                }
+                , render : function() {
+
+                    var
+                        style1 = {
+                            color               : "red"
+                            , textDecoration    : "line-through"
+                            , textAlign         : "center"
+                            , fontSize          : "20px"
+                            , fontWeight        : "bold"
+                            , background        : "blue"
+                            , paddingLeft       : "100px"
+                            , marginLeft        : "100px"
+                            , opacity           : 0.5
+                            , lineHeight        : "100px"
+                            , borderLeft        : "20px solid black"
+                        },
+                        style2 = {
+                            color               : "blue"
+                            , textDecoration    : "normal"
+                            , textAlign         : "left"
+                            , fontWeight        : "normal"
+                            , background        : "green"
+                            , paddingLeft       : "0"
+                            , marginLeft        : "0"
+                            , opacity           : 1
+                            , lineHeight        : "20px"
+                            , borderLeft        : "none 0"
+                        },
+                        style = this.state.mark ? style1 : style2;
+
+
+                    return (
+                        <div style={style} onClick={this.handleClick}>这里是字</div>
+                    );
+                }
+            } );
+
+        ReactDOM.render( <App />, document.getElementById( "example" ) );
+    </script>
+</body>
+</html>

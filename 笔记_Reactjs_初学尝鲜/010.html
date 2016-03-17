@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+</head>
+
+<body>
+    <div id="example"></div>
+
+    <script src="lib/0.14.7/react.min.js"></script>
+    <script src="lib/0.14.7/react-dom.min.js"></script>
+    <script src="lib/babel-core/browser.min.js"></script>
+
+    <script type="text/babel">
+        var
+            Header = React.createClass( {
+
+                handleSelect : function() {
+
+                    this.props.appdata.app.selectAllItems();
+                }
+                , handleClick : function() {
+
+                    this.props.appdata.app.removeItem();
+                }
+                , render : function() {
+
+                    var
+                        app_list        = this.props.appdata.list,
+                        num_willDelete  = 0,
+                        num_all         = app_list.length,
+                        is_selectAll    = false;
+
+                    app_list.forEach( function( data, index ) {
+
+                        if ( data.state === "willDelete" ) {
+
+                            num_willDelete += 1;
+
+                        }
+                    } );
+
+                    is_selectAll = !!app_list.length && app_list.length === num_willDelete;
+
+                    return (
+                        <div>
+                            <input type="checkbox" onChange={this.handleSelect} checked={is_selectAll} />
+                            TODO List (has {num_all} item{num_all > 1 ? "s" : ''})
+                            <button onClick={this.handleClick}>Delete {num_willDelete} item{num_willDelete > 1 ? "s" : ''}!</button>
+                        </div>
+                    );
+                }
+            } ),
+            Item = React.createClass( {
+
+                handleChange : function( evt ) {
+
+                    this.props.appdata.app.changeItemState( this.props.itemindex );
+                }
+                , render : function() {
+
+                    var
+                        checked = this.props.itemdata.state === "willDelete",
+                        style = {
+                            textDecoration : checked ? "line-through" : "normal"
+                        };
+
+                    console.log( style );
+
+                    return (
+                        <li>
+                            <input type="checkbox" checked={checked} onChange={this.handleChange} />
+                            <span style={style}>{this.props.itemdata.content}</span>
+                        </li>
+                    );
+                }
+            } ),
+            List = React.createClass( {
+
+                render : function() {
+
+                    var appdata = this.props.appdata;
+
+                    return (
+                        <ul>
+                            {appdata.list.map( function( itemdata, index ) {
+                                return <Item appdata={appdata} itemdata={itemdata} itemindex={index} />
+                            } )}
+                        </ul>
+                    );
+                }
+            } ),
+            Bottom = React.createClass( {
+
+                handleClick : function( evt ) {
+
+                    this.props.appdata.app.addNewItem( this.refs.textCom.getDOMNode().value );
+
+                    this.refs.textCom.getDOMNode().value = "";
+                }
+                , render : function() {
+
+                    return (
+                        <div>
+                            <input type="text" ref="textCom" />
+                            <button onClick={this.handleClick}>Add!</button>
+                        </div>
+                    );
+                }
+            } ),
+            App = React.createClass( {
+
+                getInitialState : function() {
+
+                    return {
+                        app     : this
+                        , list  : [
+                                        {
+                                            content : "hello kitty"
+                                            , state : "isNormal" // or "willDelete"
+                                        }
+                                    ]
+                    };
+                }
+                , changeItemState : function( index ) {
+
+                    var newList = this.state.list;
+
+                    newList[ index ].state = newList[ index ].state === "isNormal" ? "willDelete" : "isNormal";
+
+                    this.setState( {
+                        list : newList
+                    } );
+                }
+                , addNewItem : function( content ) {
+
+                    var newList = this.state.list;
+
+                    newList.push( {
+                        content : content
+                        , state : "isNormal"
+                    } );
+
+                    this.setState( {
+                        list : newList
+                    } );
+                }
+                , removeItem : function() {
+
+                    var
+                        oldList = this.state.list,
+                        newList = [];
+
+                    oldList.forEach( function( data, index ) {
+
+                        if ( data.state === "isNormal" ) {
+
+                            newList.push( data );
+                        }
+                    } );
+
+                    this.setState( {
+                        list : newList
+                    } );
+                }
+                , selectAllItems : function() {
+
+                    var
+                        newList = this.state.list;
+
+                    newList.forEach( function( data, index ) {
+
+                        data.state = "willDelete";
+                    } );
+
+                    this.setState( {
+                        list : newList
+                    } );
+                }
+                , render : function() {
+
+                    return (
+                        <div>
+                            <Header appdata={this.state} />
+                            <List appdata={this.state} />
+                            <Bottom appdata={this.state} />
+                        </div>
+                    );
+                }
+            } );
+
+        ReactDOM.render( <App />, document.body );
+    </script>
+</body>
+</html>

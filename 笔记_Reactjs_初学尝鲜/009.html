@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+</head>
+
+<body>
+    <div id="example"></div>
+
+    <script src="lib/0.14.7/react.min.js"></script>
+    <script src="lib/0.14.7/react-dom.min.js"></script>
+    <script src="lib/babel-core/browser.min.js"></script>
+
+    <script type="text/babel">
+        var
+            Child = React.createClass( {
+                handleClick : function() {
+                    this.props.appdata.app.setState( { name : Math.random() + " from Child" } );
+                }
+                , render : function() {
+                    return (
+                        <div>
+                            Sun: {this.props.appdata.name}
+                            <br />
+                            <button onClick={this.handleClick}>Click me!</button>
+                        </div>
+                    );
+                }
+            } ),
+            Parent = React.createClass( {
+                handleClick : function() {
+                    this.props.appdata.app.setState( { name : Math.random() + " from Parent" } );
+                }
+                , render : function() {
+                    return (
+                        <div>
+                            Parent: {this.props.appdata.name}
+                            <br />
+                            <button onClick={this.handleClick}>Click me!</button>
+                            <Child appdata={this.props.appdata} />
+                        </div>
+                    );
+                }
+            } ),
+            App = React.createClass( {
+                getInitialState : function() {
+                    console.log( "getInitialState" );
+                    return {
+                        app     : this
+                        , name  : ""
+                    };
+                }
+                , handleClick : function() {
+                    this.setState( { name : Math.random() + " from App" } );
+                }
+                , render : function() {
+                    console.log( "render" );
+                    return (
+                        <div>
+                            App: {this.state.name}
+                            <br />
+                            <button onClick={this.handleClick}>Click me!</button>
+                            <Parent appdata={this.state} />
+                        </div>
+                    );
+                }
+            } );
+
+        ReactDOM.render( <App />, document.body );
+    </script>
+</body>
+</html>

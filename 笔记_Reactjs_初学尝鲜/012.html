@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+</head>
+
+<body>
+    <div id="example"></div>
+
+    <script src="lib/0.14.7/react.js"></script>
+    <script src="lib/0.14.7/react-dom.js"></script>
+    <script src="lib/babel-core/browser.min.js"></script>
+
+    <script type="text/babel">
+        var
+            App = React.createClass( {
+
+                getInitialState : function() {
+
+                    return { textDecoration : "normal" };
+                }
+                , handleClick : function() {
+
+                    var textDecoration = this.state.textDecoration === "normal" ? "line-through" : "normal";
+
+                    this.setState( { textDecoration : textDecoration } );
+
+                    console.log( this.state );
+                }
+                , render : function() {
+
+                    return (
+                        <div style={this.state} onClick={this.handleClick}>Text</div>
+                    );
+                }
+            } );
+
+        ReactDOM.render( <App />, document.getElementById( "example" ) );
+    </script>
+</body>
+</html>

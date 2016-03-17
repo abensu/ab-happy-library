@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+</head>
+
+<body>
+    <div id="example"></div>
+
+    <script src="lib/0.14.7/react.min.js"></script>
+    <script src="lib/0.14.7/react-dom.min.js"></script>
+    <script src="lib/babel-core/browser.min.js"></script>
+
+    <script type="text/babel">
+
+        var
+            FormField = React.createClass( {
+                getInitialState : function() {
+
+                    return {
+                        radioVal    : "1",
+                        checkboxVal : [ "1" ],
+                        selectVal   : "1",
+                        inputVal    : "",
+                        textareaVal : ""
+                    };
+                },
+                radioChange : function( evt ) {
+
+                    this.setState( { radioVal : evt.target.value } );
+                },
+                checkboxChange : function( evt ) {
+
+                    var
+                        checkedVal  = evt.target.value,
+                        vals        = this.state.checkboxVal,
+                        index       = vals.indexOf( checkedVal );
+
+                    if ( index !== -1 ) { // 有值则剔除
+
+                        vals.splice( index, 1 );
+
+                    } else { // 无值则添加
+
+                        vals.push( checkedVal );
+                    }
+
+                    this.setState( { checkboxVal : vals } );
+                },
+                selectChange : function( evt ) {
+
+                    this.setState( { selectVal : evt.target.value } );
+                },
+                inputChange : function( evt ) {
+
+                    this.setState( { inputVal : evt.target.value } );
+                },
+                textareaChange : function( evt ) {
+
+                    this.setState( { textareaVal : evt.target.value } );
+                },
+                textareaWheel : function( evt ) {
+
+                    console.log( evt.deltaMode );
+                    console.log( evt.deltaX ); // 左右
+                    console.log( evt.deltaY ); // 上：负数，下：正数
+                    console.log( evt.deltaZ );
+                },
+                render : function() {
+                    return (
+                        <form>
+                            <input type="radio" name="radio" value="1" checked={this.state.radioVal === "1"} onChange={this.radioChange} />
+                            <input type="radio" name="radio" value="2" checked={this.state.radioVal === "2"} onChange={this.radioChange} />
+                            <input type="radio" name="radio" value="3" checked={this.state.radioVal === "3"} onChange={this.radioChange} />
+                            <br />
+                            <input type="checkbox" name="checkbox" value="1" checked={this.state.checkboxVal.indexOf( "1" ) !== -1} onChange={this.checkboxChange} />
+                            <input type="checkbox" name="checkbox" value="2" checked={this.state.checkboxVal.indexOf( "2" ) !== -1} onChange={this.checkboxChange} />
+                            <input type="checkbox" name="checkbox" value="3" checked={this.state.checkboxVal.indexOf( "3" ) !== -1} onChange={this.checkboxChange} />
+                            <br />
+                            <select onChange={this.selectChange} value={this.state.selectVal}>
+                                <option value="1">选项一</option>
+                                <option value="2">选项二</option>
+                                <option value="3">选项三</option>
+                            </select>
+                            <br />
+                            <input type="text" value={this.state.inputVal} onChange={this.inputChange} />
+                            <br />
+                            <textarea value={this.state.textareaVal} onChange={this.textareaChange} onWheel={this.textareaWheel} />
+                        </form>
+                    );
+                }
+            } );
+
+        ReactDOM.render(
+            <FormField />,
+            document.body
+        );
+    </script>
+</body>
+</html>

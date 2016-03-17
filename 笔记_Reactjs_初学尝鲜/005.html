@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+</head>
+
+<body>
+    <div id="example"></div>
+
+    <script src="lib/0.14.7/react.min.js"></script>
+    <script src="lib/0.14.7/react-dom.min.js"></script>
+    <script src="lib/babel-core/browser.min.js"></script>
+
+    <script type="text/babel">
+
+        var
+            TextBoard = React.createClass( {
+                getInitialState : function() {
+                    return { backgroundColor : "#ffffff" }
+                },
+                changeColor : function() {
+
+                    var newColor = "#" + Math.random().toString( 16 ).replace( /0\./, '' ).substring( 0, 6 );
+
+                    this.setState( {
+                        backgroundColor : newColor
+                    } );
+                },
+                render : function() {
+                    return (
+                        <div style={this.state} onClick={this.changeColor}>请点击改变背景颜色（{this.state.backgroundColor}）</div>
+                    );
+                }
+            } );
+
+        ReactDOM.render(
+            <TextBoard />,
+            document.body
+        );
+    </script>
+</body>
+</html>

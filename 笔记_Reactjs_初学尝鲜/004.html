@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <style media="screen">
+        .red {color: red;}
+        .green {color: green;}
+        .blue {color: blue;}
+        .gray {color: gray;}
+    </style>
+</head>
+
+<body>
+    <div id="example"></div>
+
+    <script src="lib/0.14.7/react.min.js"></script>
+    <script src="lib/0.14.7/react-dom.min.js"></script>
+    <script src="lib/babel-core/browser.min.js"></script>
+
+    <script type="text/babel">
+
+        var
+            ShowBoard = React.createClass( {
+                getInitialState : function() {
+                    return { textColor : "gray" };
+                },
+                componentWillMount : function() { // 阶段一：初始化前
+                    console.log( "componentWillMount" );
+                },
+                componentDidMount : function() { // 阶段二：已渲染
+                    console.log( "componentDidMount" );
+                },
+                componentWillReceiveProps : function( nextProps ) {// 阶段三：props 改变前
+                    console.log( "componentWillReceiveProps" );
+                    console.log( this.props.content );
+
+                    return true;
+                },
+                shouldComponentUpdate : function( nextProps, nextState ) { // 阶段四：接收到新的 props 或者 state，将要渲染之前
+                    console.log( "shouldComponentUpdate" );
+                    console.log( this.props.content );
+
+                    return true;
+                },
+                componentWillUpdate : function( nextProps, nextState ) { // 阶段五：接收到新的 props 或者 state 之前
+                    console.log( "componentWillUpdate" );
+                    console.log( this.props.content );
+                },
+                componentDidUpdate : function( prevProps, prevState ) { // 阶段六：在组件的更新已经同步到 DOM 中之后
+                    console.log( "componentDidUpdate" );
+                    console.log( this.props.content );
+
+                    // console.log( prevProps );
+                    // console.log( prevState );
+
+                    // 必须加上这个差异判断，不然每 setState 一次，就会促发 componentDidUpdate 一次
+                    if ( prevProps.content !== this.props.content ) {
+
+                        var
+                            color = "";
+
+                        switch ( parseInt( this.props.content.length / 10 ) ) {
+                            case 0 : color = "red";     break;
+                            case 1 : color = "green";   break;
+                            case 2 : color = "blue";    break;
+                            default: color = "gray";    break;
+                        }
+
+                        this.setState( { textColor : color } );
+                    }
+                },
+                componentWillUnmount : function() { // 阶段七：组件从 DOM 中移除
+                    console.log( "componentWillUnmount" );
+                },
+                callByParent : function() {
+                    alert( "调用了！" );
+                },
+                render : function() {
+                    return (
+                        <div className={this.state.textColor}>{this.props.content}</div>
+                    );
+                }
+            } );
+
+        var
+            BillBoard = React.createClass( {
+                getInitialState : function() {
+                    return { text : "" };
+                },
+                handleInput : function( evt ) {
+                    this.setState( { text : evt.target.value } );
+                },
+                callChild : function() {
+                    this.refs.showboard.callByParent();
+                },
+                render : function() {
+                    return (
+                        <div>
+                            <input type="text" value={this.state.text} onChange={this.handleInput} />
+                            <a onClick={this.callChild}>点击调用</a>
+                            <ShowBoard content={this.state.text} ref="showboard" />
+                        </div>
+                    )
+                }
+            } );
+
+        ReactDOM.render(
+            <BillBoard />,
+            document.getElementById('example')
+        );
+    </script>
+</body>
+</html>

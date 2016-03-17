@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+</head>
+
+<body>
+    <div id="example"></div>
+
+    <script src="lib/0.14.7/react.js"></script>
+    <script src="lib/0.14.7/react-dom.js"></script>
+    <script src="lib/babel-core/browser.min.js"></script>
+
+    <script type="text/babel">
+        var
+            Sub1 = React.createClass( {
+
+                handleClick : function() {
+
+                    this.props.appdata.app.setState( { root_name : Math.random() } );
+                }
+                , render : function() {
+
+                    return (
+                        <div onClick={this.handleClick}>{this.props.appdata.root_name}</div>
+                    );
+                }
+            } ),
+            Sub2 = React.createClass( {
+
+                getInitialState : function() {
+
+                    return { root_name_len : String( this.props.appdata.root_name ).length };
+                }
+                , componentWillReceiveProps : function( nextProps ) {
+
+                    this.setState( { root_name_len : String( nextProps.appdata.root_name ).length } );
+                }
+                , render : function() {
+
+                    return (
+                        <div onClick={this.handleClick}>
+                            {this.props.appdata.root_name} 即 {this.state.root_name_len} 个字符
+                        </div>
+                    );
+                }
+            } ),
+            App = React.createClass( {
+
+                getInitialState : function() {
+
+                    return {
+                        app         : this
+                        , root_name : "hello"
+                    };
+                }
+                , render : function() {
+
+                    return (
+                        <div>
+                            <Sub1 appdata={this.state} />
+                            <Sub2 appdata={this.state} />
+                        </div>
+                    );
+                }
+            } );
+
+        ReactDOM.render( <App />, document.getElementById( "example" ) );
+    </script>
+</body>
+</html>
