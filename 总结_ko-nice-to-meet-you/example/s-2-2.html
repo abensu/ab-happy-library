@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>ko.utils.moveCleanedNodesToContainerElement</title>
+</head>
+<body>
+
+    <form id="formTar">
+        <input type="text" data-bind="value: val, valueUpdate: 'afterkeydown'">
+        <input type="text" data-bind="textInput: val" disabled>
+        <input type="text" data-bind="visible: isShow" value="你应该看不到我">
+        <input type="text" data-bind="attr: {show: isShow}" value="show属性应该为 0">
+        <span data-bind="text: val">&nbsp;</span>
+        <input type="button" data-bind="click: alt" value="点击我就alert">
+        <div id="copyedBox"></div>
+    </form>
+    
+    <script src="http://knockoutjs.com/downloads/knockout-3.3.0.debug.js"></script>
+    <script>
+
+        var
+            formTar     = document.getElementById("formTar"),
+            inputs      = formTar.getElementsByTagName("input"),
+            copyedBox   = document.getElementById("copyedBox"),
+            TestModel   = function() {
+
+                                var self = this;
+
+                                self.val = ko.observable();
+
+                                self.isShow = ko.observable(0);
+
+                                self.alt = function() { alert("你点我了"); };
+                            },
+            testModel   = new TestModel,
+            container   = null;
+
+        ko.applyBindings(testModel, formTar);
+
+        testModel.val("hello kitty");
+
+        container = ko.utils.moveCleanedNodesToContainerElement(inputs);
+
+        copyedBox.appendChild(container);
+
+    </script>
+</body>
+</html>

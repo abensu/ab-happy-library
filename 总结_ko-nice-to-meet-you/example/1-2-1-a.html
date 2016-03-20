@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>1-2-1-a</title>
+</head>
+
+<body>
+    <input type="text" name="input" id="input">
+    <input type="text" name="output" id="output" disabled>
+    <script>
+
+        var
+            model   = {},
+            input   = document.getElementById("input"),
+            output  = document.getElementById("output");
+
+        model.val = 123;
+
+        input.value = output.value = model.val;
+
+    </script>
+</body>
+</html>

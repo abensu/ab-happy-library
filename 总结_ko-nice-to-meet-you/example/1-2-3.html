@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>1-2-3</title>
+</head>
+
+<body>
+    <input type="text" name="input" id="input">
+    <input type="text" name="output" id="output" disabled>
+    <script>
+
+        var
+            model       = {
+                                val : 123
+                            },
+            broadcast   = null,
+            Broadcast   = null,
+            input       = document.getElementById("input"),
+            output      = document.getElementById("output");
+
+
+        // 发布/订阅类
+        Broadcast = function() {
+
+            this.store = {};
+        };
+
+        Broadcast.prototype.sub = function(name, func) { // 订阅（Subscribe）
+
+            var _store = this.store;
+
+            if (!(name in _store)) {
+
+                _store[name] = [];
+            }
+
+            _store[name].push(func);
+
+            return this;
+        };
+
+        Broadcast.prototype.pub = function(name, data) { // 发布（Public）
+
+            var _store = this.store;
+
+            if (name in _store) {
+
+                for (var _i = 0, _list = _store[name], _len = _list.length; _i < _len; _i++) {
+
+                    _list[_i](data);
+                }
+
+            } else {
+
+                alert(name + " 不存在，请先订阅");
+            }
+
+            return this;
+        };
+
+        // 实例
+        broadcast = new Broadcast();
+
+        // 订阅相关事件
+        broadcast
+            .sub("/update/value", function(data) {
+
+                var _val = data.val;
+
+                model.val = _val;
+
+                // 由于 ie 下，页面加载完，input 不会立刻修改其 value 值，要通过此 hack 才行
+                setTimeout(function() {
+                    input.value = _val;
+                    output.value = _val;
+                }, 0);
+
+            })
+            .sub("/init/ele", function() {
+
+                var func = function(event) {
+
+                    var _tar = event.target || event.srcElement;
+
+                    broadcast.pub("/update/value", { val : _tar.value });
+                };
+
+                // 绑定 1 个事件
+                if (input.addEventListener) {
+
+                    input.addEventListener("change", func, "false");
+
+                } else {
+
+                    input.attachEvent("onchange", func);
+                }
+            });
+
+        // 发布相关事件
+        broadcast
+            .pub("/update/value", { val : model.val })
+            .pub("/init/ele");
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>1-2-2</title>
+</head>
+
+<body>
+    <input type="text" name="input" id="input">
+    <input type="text" name="output" id="output" disabled>
+    <script>
+
+        var
+            model       = {
+                                val : 123
+                            },
+            ctrl        = null,
+            Control     = null,
+            input       = document.getElementById("input"),
+            output      = document.getElementById("output");
+
+        // 观察者类
+        Control = function(model) {
+
+            this.model      = model;
+
+            this.targets    = [];
+        };
+
+        Control.prototype = {
+
+            constructor : Control,
+
+            set : function(name, value) {
+
+                var
+                    _self       = this,
+                    _model      = _self.model,
+                    _targets    = _self.targets;
+
+                if (name in _model) {
+
+                    _model[name] = value;
+
+                    for (var _i = 0, _len = _targets.length; _i < _len; _i++) {
+
+                        _targets[_i].value = value;
+                    }
+                }
+
+                return _self;
+            },
+
+            bind : function(name, ele) {
+
+                var
+                    _self = this,
+                    _type = "change",
+                    _func;
+
+                _func = function(event) {
+
+                    // 由于 attatchEvent 存在 this 指向 window 的问题，所以采用此方式去兼容
+                    var _tar = event.target || event.srcElement;
+
+                    _self.set(name, _tar.value);
+                };
+
+                _self.targets.push(ele);
+
+                if (ele.addEventListener) {
+
+                    ele.addEventListener(_type, _func, false);
+
+                } else {
+
+                    ele.attachEvent("on" + _type, _func);
+                }
+
+                return _self;
+            },
+
+            init : function() {
+
+                var
+                    _self   = this,
+                    _model  = _self.model;
+
+                for (var _key in _model) {
+
+                    // 由于 ie 下，页面加载完，input 不会立刻修改其 value 值，要通过此 hack 才行
+                    setTimeout(function() {
+                        _self.set(_key, _model[_key]);
+                    }, 0);
+                }
+
+                return _self;
+            }
+        };
+
+        // 实例
+        ctrl = new Control(model);
+
+        ctrl
+            .bind("val", input)
+            .bind("val", output)
+            .init();
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>ko.utils.moveCleanedNodesToContainerElement</title>
+</head>
+<body>
+
+    <div id="testTar">
+        <ul>
+            <li></li>
+            <li></li>
+        </ul>
+        <div>
+            <span></span>
+            <span></span>
+        </div>
+        <ol>
+            <li></li>
+            <li></li>
+        </ol>
+    </div>
+    
+    <script src="http://knockoutjs.com/downloads/knockout-3.3.0.debug.js"></script>
+    <script>
+
+        (function() {
+
+            var
+                testTar     = document.getElementById("testTar"),
+                ul          = testTar.getElementsByTagName("ul")[0],
+                lis         = ko.utils.makeArray( testTar.getElementsByTagName("li") ),
+                spans       = ko.utils.makeArray( testTar.getElementsByTagName("span") ),
+                nodes       = ( [].concat(lis) ).concat(spans);
+
+            console.log(nodes); // [li, li, li, li, span, span]
+            console.log( ko.utils.fixUpContinuousNodeArray(nodes, ul) ); // undefined
+            //  ↓
+            // nodes
+            //  ↓
+            // [li, <TextNode textContent="\n ">, li, <TextNode textContent="\n ">]
+            //  ↓
+            // 处理的结果为 undefined
+
+        })();
+
+        (function() {
+
+            var
+                testTar     = document.getElementById("testTar"),
+                ul          = testTar.getElementsByTagName("ul")[0],
+                ulLis       = ko.utils.makeArray( ul.getElementsByTagName("li") ),
+                nodes       = [].concat(ulLis);
+
+            console.log(nodes); // [li, li]
+            console.log( ko.utils.fixUpContinuousNodeArray(nodes, ul) ); // [li, <TextNode textContent="\n ">, li]
+            //  ↓
+            // nodes
+            //  ↓
+            // [li, <TextNode textContent="\n ">, li]
+            //  ↓
+            // 处理的结果为 [li, <TextNode textContent="\n ">, li]
+
+        })();
+
+        (function() {
+
+            var
+                testTar     = document.getElementById("testTar"),
+                ul          = testTar.getElementsByTagName("ul")[0],
+                ulLis       = ko.utils.makeArray( ul.getElementsByTagName("li") ),
+                nodes       = [].concat(ulLis.reverse());
+
+            console.log(nodes); // [li, li]
+            console.log( ko.utils.fixUpContinuousNodeArray(nodes, ul) ); // undefined
+            //  ↓
+            // nodes
+            //  ↓
+            // [ ulLis[1], <TextNode textContent="\n ">, ulLis[0] ]
+            //  ↓
+            // 处理的结果为 undefined
+
+        })();
+
+    </script>
+</body>
+</html>

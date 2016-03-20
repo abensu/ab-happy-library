@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>2-6-2</title>
+</head>
+
+<body>
+    <h3>All tasks (<span data-bind="text: tasks().length"> </span>)</h3>
+    <ul data-bind="foreach: tasks">
+        <li>
+            <label>
+                <input type="checkbox" data-bind="checked: done" />
+                <span data-bind="text: title"> </span>
+            </label>
+        </li>
+    </ul>
+     
+    <h3>Done tasks (<span data-bind="text: doneTasks().length"> </span>)</h3>
+    <ul data-bind="foreach: doneTasks">
+        <li data-bind="text: title"></li>
+    </ul>
+
+    <script src="http://knockoutjs.com/downloads/knockout-3.3.0.js"></script>
+    <script>
+        ko.observableArray.fn.filterByProperty = function(propName, matchValue) {
+
+            typeof console !== "undefined" && console.log("执行");
+
+            return ko.pureComputed(function() {
+                var allItems = this(), matchingItems = [];
+                for (var i = 0; i < allItems.length; i++) {
+                    var current = allItems[i];
+                    if (ko.unwrap(current[propName]) === matchValue)
+                        matchingItems.push(current);
+                }
+                return matchingItems;
+            }, this);
+        }
+
+        function Task(title, done) {
+            this.title = ko.observable(title);
+            this.done = ko.observable(done);
+        }
+         
+        function AppViewModel() {
+            this.tasks = ko.observableArray([
+                new Task('Find new desktop background', true),
+                new Task('Put shiny stickers on laptop', false),
+                new Task('Request more reggae music in the office', true)
+            ]);
+         
+            // Here's where we use the custom function
+            this.doneTasks = this.tasks.filterByProperty("done", true);
+        }
+         
+        ko.applyBindings(new AppViewModel());
+    </script>
+</body>
+</html>

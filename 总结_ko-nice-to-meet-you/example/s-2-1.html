@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+</head>
+<body>
+    <h2>onpropertychange | oninput</h2>
+
+    <input type="text" id="input" name="input">
+    <input type="text" id="output01" name="output01" disabled>
+
+    <br>
+
+    <select id="select" name="select">
+        <option value="01">01</option>
+        <option value="02">02</option>
+    </select>
+    <input type="text" id="output02" name="output02" disabled>
+
+    <br>
+
+    <input type="checkbox" id="checkbox" name="checkbox" value="01">01
+    <input type="checkbox" id="checkbox" name="checkbox" value="02">02
+    <input type="checkbox" id="checkbox" name="checkbox" value="03">03
+    <input type="text" id="output03" name="output03" disabled>
+
+    <br>
+
+    <input type="radio" id="radio" name="radio" value="01">01
+    <input type="radio" id="radio" name="radio" value="02">02
+    <input type="radio" id="radio" name="radio" value="03">03
+    <input type="text" id="output04" name="output04" disabled>
+
+    <h2>onchange</h2>
+
+    <input type="text" id="input01" name="input01">
+    <input type="text" id="output001" name="output001" disabled>
+
+    <br>
+
+    <select id="select01" name="select01">
+        <option value="01">01</option>
+        <option value="02">02</option>
+    </select>
+    <input type="text" id="output002" name="output002" disabled>
+
+    <br>
+
+    <input type="checkbox" id="checkbox01" name="checkbox01" value="01">01
+    <input type="checkbox" id="checkbox01" name="checkbox01" value="02">02
+    <input type="checkbox" id="checkbox01" name="checkbox01" value="03">03
+    <input type="text" id="output003" name="output003" disabled>
+
+    <br>
+
+    <input type="radio" id="radio01" name="radio01" value="01">01
+    <input type="radio" id="radio01" name="radio01" value="02">02
+    <input type="radio" id="radio01" name="radio01" value="03">03
+    <input type="text" id="output004" name="output004" disabled>
+
+    <script>
+        var
+            input       = document.getElementById('input'),
+            select      = document.getElementById('select'),
+            checkbox    = document.getElementsByName('checkbox'),
+            radio       = document.getElementsByName('radio'),
+            output01    = document.getElementById('output01'),
+            output02    = document.getElementById('output02'),
+            output03    = document.getElementById('output03'),
+            output04    = document.getElementById('output04');
+
+        var
+            input01     = document.getElementById('input01'),
+            select01    = document.getElementById('select01'),
+            checkbox01  = document.getElementsByName('checkbox01'),
+            radio01     = document.getElementsByName('radio01'),
+            output001   = document.getElementById('output001'),
+            output002   = document.getElementById('output002'),
+            output003   = document.getElementById('output003'),
+            output004   = document.getElementById('output004');
+
+        function foreach(array, action) {
+
+            var
+                i   = 0,
+                arr = array,
+                len = arr.length;
+
+            for (; i < len; i++) {
+
+                action(arr[i], i);
+            }
+        };
+
+        /**
+         * onpropertychange | oninut
+         */
+        if (!!input.attachEvent) {
+
+            input.attachEvent('onpropertychange', function(event) {
+                output01.value = event.srcElement.value;
+            });
+
+            select.attachEvent('onpropertychange', function(event) {
+                output02.value = event.srcElement.value;
+            });
+
+            foreach(checkbox, function(ele, index) {
+
+                ele.attachEvent('onpropertychange', function(event) {
+                    output03.value = event.srcElement.value;
+                });
+            });
+
+            foreach(radio, function(ele, index) {
+
+                ele.attachEvent('onpropertychange', function(event) {
+                    output04.value = event.srcElement.value;
+                });
+            });
+
+        } else {
+
+            input.addEventListener('input', function(event) {
+                output01.value = event.target.value;
+            }, false);
+
+            select.addEventListener('input', function(event) {
+                output02.value = event.target.value;
+            }, false);
+
+            foreach(checkbox, function(ele, index) {
+
+                ele.addEventListener('input', function(event) {
+                    output03.value = event.target.value;
+                }, false);
+            });
+
+            foreach(radio, function(ele, index) {
+
+                ele.addEventListener('input', function(event) {
+                    output04.value = event.target.value;
+                }, false);
+            });
+        }
+
+        /**
+         * onchange
+         */
+        if (!!input.attachEvent) {
+
+            input01.attachEvent('onchange', function(event) {
+                output001.value = event.srcElement.value;
+            });
+
+            select01.attachEvent('onchange', function(event) {
+                output002.value = event.srcElement.value;
+            });
+
+            foreach(checkbox01, function(ele, index) {
+
+                ele.attachEvent('onchange', function(event) {
+                    output003.value = event.srcElement.value;
+                });
+            });
+
+            foreach(radio01, function(ele, index) {
+
+                ele.attachEvent('onchange', function(event) {
+                    output004.value = event.srcElement.value;
+                });
+            });
+
+        } else {
+
+            input01.addEventListener('change', function(event) {
+                output001.value = event.target.value;
+            }, false);
+
+            select01.addEventListener('change', function(event) {
+                output002.value = event.target.value;
+            }, false);
+
+            foreach(checkbox01, function(ele, index) {
+
+                ele.addEventListener('change', function(event) {
+                    output003.value = event.target.value;
+                }, false);
+            });
+
+            foreach(radio01, function(ele, index) {
+
+                ele.addEventListener('change', function(event) {
+                    output004.value = event.target.value;
+                }, false);
+            });
+        }
+        
+    </script>
+</body>
+</html>

@@ -1,0 +1,120 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>迷你购物</title>
+    <link rel="stylesheet" href="w-1-2-main.css">
+</head>
+
+<body class="mod_loading">
+
+    <!-- 迷你购物 start -->
+    <div class="mod_app grid">
+        <div class="col-9">
+
+            <!-- 搜索框 start -->
+            <div class="mod_search el_container" data-bind="with: Search">
+                <input type="text" placeholder="关键词" data-bind="value: keyword, event: {change: $root.cmd.bind($root, 'search')}">
+                <label>分类：</label>
+                <select data-bind="options: types, optionsText: 'label', optionsValue: 'typeid', value: typesNow, event: {change: $root.cmd.bind($root, 'search')}"></select>
+                对象：
+                <!-- ko foreach: sex -->
+                <label>
+                    <span data-bind="text: label">&nbsp;</span>
+                    <input name="sex" type="radio" data-bind="value: sexid, checked: $parent.sexNow, event: {change: $root.cmd.bind($root, 'search')}">
+                </label>
+                <!-- /ko -->
+            </div>
+            <!-- 搜索框 end -->
+
+            <div class="el_blank"></div>
+
+            <div class="el_container">
+
+                <!-- 展示区域 start -->
+                <div class="mod_showList" data-bind="with: List">
+
+                    <div class="grid" data-bind="template: {name: 'mod_showList_item', foreach: showList, afterRender: $data.cmd.bind($data, 'render/item')}"></div>
+
+                    <script type="text/html" id="mod_showList_item">
+                        <div class="item col-4" data-bind="css: {hasBuied : buyNum}">
+                            <img class="pic" data-bind="attr: {src: pic}">
+                            <span class="name" data-bind="text: name">&nbsp;</span>
+                            <span class="prize" data-bind="text: '￥' + prize">&nbsp;</span>
+                            <a class="btn" data-bind="click: $root.cmd.bind($root, 'buyopt')">购买</a>
+                        </div>
+                    </script>
+
+                    <!-- ko if: !showList().length -->
+                    <div class="item col-12 noDataTip">暂无数据 %&gt;_&lt;%</div>
+                    <!-- /ko -->
+                </div>
+                <!-- 展示区域 end -->
+
+                <!-- 分页区域 start -->
+                <div class="mod_pageList" data-bind="with: Pages">
+                    <a data-bind="click: $root.cmd.bind($root, 'prevpage'), visible: prevVisState">&lt;&lt;上一页</a>
+                    <!-- ko foreach: pageList -->
+                    <a data-bind="text: page + 1, click: $root.cmd.bind($root, 'page'), css: {cur: isCur}">&nbsp;</a>
+                    <!-- /ko -->
+                    <a data-bind="click: $root.cmd.bind($root, 'nextpage'), visible: nextVisState">下一页&gt;&gt;</a>
+                </div>
+                <!-- 分页区域 end -->
+
+            </div>
+        </div>
+        <div class="col-3">
+
+            <!-- 购物车 start -->
+            <div class="mod_cart el_container" data-bind="with: Cart">
+                <h3>购物车</h3>
+                <ul>
+                    <!-- ko foreach: cartList -->
+                    <li class="grid">
+                        <div class="col-4">
+                            <img class="pic" data-bind="attr: {src: pic}">
+                        </div>
+                        <div class="col-8">
+                            <span class="name" data-bind="text: name">&nbsp;</span>
+                            <a class="btn" title="加一件" data-bind="click: $root.cmd.bind($root, 'up')">+</a>
+                            <a class="btn" title="减一件" data-bind="click: $root.cmd.bind($root, 'down')">-</a>
+                            <a class="btn" title="不要它了！" data-bind="click: $root.cmd.bind($root, 'buyopt')">x</a>
+                            <br>
+                            <span class="txt" data-bind="text: prize">&nbsp;</span>
+                            x
+                            <span class="txt" data-bind="text: buyNum">&nbsp;</span>
+                            =
+                            <span class="txt" data-bind="text: prize * buyNum()">&nbsp;</span>
+                        </div>
+                    </li>
+                    <!-- /ko -->
+                    <li>
+                        <span class="txt">￥<span data-bind="text: totalPrize"></span></span>
+                        <a class="btn fn_right" data-bind="click: $root.cmd.bind($root, 'buynow'), visible: totalPrize">确定购买</a>
+                    </li>
+                </ul>
+            </div>
+            <!-- 购物车 end -->
+
+        </div>
+    </div>
+    <!-- 迷你购物 end -->
+
+    <script src="lib/knockout/3.3.0/knockout.js"></script><!-- 库 -->
+    <script src="w-1-2-json.js"></script><!-- 数据 -->
+    <!-- 基类 -->
+    <script src="w-1-2-model-base.js"></script>
+    <script src="w-1-2-model-production.js"></script>
+    <script src="w-1-2-model-page.js"></script>
+    <!-- 模块 -->
+    <script src="w-1-2-model-pages.js"></script>
+    <script src="w-1-2-model-search.js"></script>
+    <script src="w-1-2-model-list.js"></script>
+    <script src="w-1-2-model-cart.js"></script>
+    <script src="w-1-2-model-store.js"></script>
+    <!-- 总类 -->
+    <script src="w-1-2-model-app.js"></script>
+    <!-- 主控 -->
+    <script src="w-1-2-main.js"></script>
+</body>
+</html>

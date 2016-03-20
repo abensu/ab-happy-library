@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>1-1-1</title>
+</head>
+
+<body>
+    <script>
+        /* 人类 */
+        var People = function() {
+
+            var self = this;
+
+            self.name = "";
+
+            self.age = 0;
+
+            self.set = function(name, age) {
+
+                self.name = name;
+
+                self.age = age;
+            };
+
+            self.say = function() {
+
+                alert("My Name: " + this.name + "\nMy age: " + this.age);
+            };
+        };
+
+        /* 某男 */
+        var man = new People();
+        man.set("John", 15);
+        man.say();
+
+        /* 某女 */
+        var lady = new People();
+        lady.set("LiLy", 20);
+        lady.say();
+
+    </script>
+</body>
+</html>

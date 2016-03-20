@@ -1,0 +1,102 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>路由</title>
+</head>
+
+<body>
+    <p>简单的单页面应用</p>
+
+    <ul>
+        <li><a href="#1">1</a></li>
+        <li><a href="#2">2</a></li>
+        <li><a href="#3">3</a></li>
+    </ul>
+
+    <div data-bind="template: {name: 'page1', data: pageData1, if: pageId() === 1}"></div>
+
+    <div data-bind="template: {name: 'page2', data: pageData2, if: pageId() === 2}"></div>
+
+    <div data-bind="template: {name: 'page3', data: pageData3, if: pageId() === 3}"></div>
+
+    <script id="page1" type="text/html">
+        <h1 data-bind="text: name"></h1>
+    </script>
+
+    <script id="page2" type="text/html">
+        <ul data-bind="foreach: list">
+            <li data-bind="text: $data"></li>
+        </ul>
+    </script>
+
+    <script id="page3" type="text/html">
+        <p data-bind="text: title"></p>
+        <ol data-bind="foreach: list">
+            <li data-bind="text: $data"></li>
+        </ol>
+    </script>
+
+    <script src="lib/knockout/3.3.0/knockout.js"></script><!-- 库 -->
+    <script>
+        var
+            ViewModel, vm,
+            Page1,
+            Page2,
+            Page3;
+
+        Page1 = function() {
+
+            this.name = "page1";
+        };
+
+        Page2 = function() {
+
+            this.list = ["page2", 1, 2, 3];
+        };
+
+        Page3 = function() {
+
+            this.list = ["he", "ll", "o"];
+
+            this.title = "this is page3";
+        };
+
+        ViewModel = function() {
+
+            var self = this;
+
+            self.pageId = ko.observable(1);
+
+            self.pageData1 = new Page1;
+            self.pageData2 = new Page2;
+            self.pageData3 = new Page3;
+        };
+
+        vm = new ViewModel;
+
+        ko.applyBindings(vm);
+
+        window.onhashchange = function() {
+
+            switch(location.hash) {
+
+                case "#2" :
+                    vm.pageId(2);
+                    break;
+
+                case "#3" :
+                    vm.pageId(3);
+                    break;
+
+                case "#1" :
+                default:
+                    vm.pageId(1);
+                    break;
+            }
+        };
+
+        location.hash = "#1"; // 一开始设置为第一页
+    </script>
+</body>
+</html>

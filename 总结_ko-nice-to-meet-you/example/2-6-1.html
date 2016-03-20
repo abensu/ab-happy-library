@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>2-6-1</title>
+</head>
+
+<body>
+    <input type="text" data-bind="value: firstName, valueUpdate: 'afterkeydown'">
+
+    <script src="http://knockoutjs.com/downloads/knockout-3.3.0.js"></script>
+    <script>
+        ko.extenders.logChange = function(target, option) {
+
+            console.log("extend logChange success");
+
+            target.subscribe(function(newValue) {
+               console.log(option + ": " + newValue);
+            });
+
+            return target;
+        };
+
+        function AppViewModel() {
+            this.firstName = ko.observable("Bob").extend({logChange: "first name"});
+        };
+
+        ko.applyBindings( new AppViewModel() );
+    </script>
+</body>
+</html>

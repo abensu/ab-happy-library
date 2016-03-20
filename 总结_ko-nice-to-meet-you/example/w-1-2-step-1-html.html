@@ -1,0 +1,98 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>迷你购物</title>
+    <link rel="stylesheet" href="w-1-2-main.css">
+</head>
+
+<body>
+    <!-- 迷你购物 start -->
+    <div class="mod_app grid">
+        <div class="col-9">
+
+            <!-- 搜索框 start -->
+            <div class="mod_search el_container">
+                <input type="text" placeholder="关键词">
+                <label>分类：</label>
+                <select>
+                    <option selected="selected">全部</option>
+                    <option>上衣</option>
+                    <option>裤子</option>
+                    <option>包袋</option>
+                </select>
+                对象：
+                <label>未知<input name="sex" type="radio" checked="checked"></label>
+                <label>男<input name="sex" type="radio"></label>
+                <label>女<input name="sex" type="radio"></label>
+            </div>
+            <!-- 搜索框 end -->
+
+            <div class="el_blank"></div>
+
+            <div class="el_container">
+
+                <!-- 展示区域 start -->
+                <div class="mod_showList grid">
+                    <div class="item col-4">
+                        <img class="pic" src="http://gi3.md.alicdn.com/bao/uploaded/i3/TB1n6NRHpXXXXaRXVXXXXXXXXXX_!!0-item_pic.jpg_430x430q90.jpg">
+                        <span class="name">假两件宽松白色雪纺衫女2015夏装短袖衫韩版圆领短袖雪纺上衣6353</span>
+                        <span class="prize">￥60</span>
+                        <a class="btn">购买</a>
+                    </div>
+                    <div class="item hasBuied col-4">
+                        <img class="pic" src="http://gi3.md.alicdn.com/bao/uploaded/i3/TB1n6NRHpXXXXaRXVXXXXXXXXXX_!!0-item_pic.jpg_430x430q90.jpg">
+                        <span class="name">假两件宽松白色雪纺衫女2015夏装短袖衫韩版圆领短袖雪纺上衣6353</span>
+                        <span class="prize">￥60</span>
+                        <a class="btn">购买</a>
+                    </div>
+                </div>
+                <!-- 展示区域 end -->
+
+                <!-- 分页区域 start -->
+                <div class="mod_pageList">
+                    <a>&lt;&lt;上一页</a>
+                    <a>非当前页码</a>
+                    <a class="cur">当前页码</a>
+                    <a>下一页&gt;&gt;</a>
+                </div>
+                <!-- 分页区域 end -->
+
+            </div>
+        </div>
+        <div class="col-3">
+
+            <!-- 购物车 start -->
+            <div class="mod_cart el_container">
+                <h3>购物车</h3>
+                <ul>
+                    <li class="grid">
+                        <div class="col-4">
+                            <img class="pic" src="http://gi3.md.alicdn.com/bao/uploaded/i3/TB1n6NRHpXXXXaRXVXXXXXXXXXX_!!0-item_pic.jpg_430x430q90.jpg">
+                        </div>
+                        <div class="col-8">
+                            <span class="name">假两件宽松白色雪纺衫女2015夏装短袖衫韩版圆领短袖雪纺上衣6353</span>
+                            <a class="btn" title="加一件">+</a>
+                            <a class="btn" title="减一件">-</a>
+                            <a class="btn" title="不要它了！">x</a>
+                            <br>
+                            <span class="txt">60</span>
+                            x
+                            <span class="txt">2</span>
+                            =
+                            <span class="txt">120</span>
+                        </div>
+                    </li>
+                    <li>
+                        <span class="txt">￥120</span>
+                        <a class="btn fn_right">确定购买</a>
+                    </li>
+                </ul>
+            </div>
+            <!-- 购物车 end -->
+
+        </div>
+    </div>
+    <!-- 迷你购物 end -->
+</body>
+</html>

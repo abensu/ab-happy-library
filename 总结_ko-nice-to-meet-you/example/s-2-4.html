@@ -1,0 +1,60 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>selected</title>
+</head>
+<body>
+    <select id="select1">
+        <option>1</option>
+        <option>2</option>
+        <option>3</option>
+    </select>
+    <select id="select2">
+        <option>one</option>
+        <option>two</option>
+        <option>three</option>
+    </select>
+    <script>
+        var
+            select1     = document.getElementById("select1"),
+            select2     = document.getElementById("select2"),
+            options1    = select1.getElementsByTagName("option"),
+            options2    = select2.getElementsByTagName("option");
+
+        options1[2].setAttribute("selected", true);
+
+        options1[1].setAttribute("selected", true);
+
+        options1[0].setAttribute("selected", true);
+
+        for (var i = 0, l = options1.length; i < l; i++) {
+
+            document.writeln( '<br>options1[' + i + '] : ' + options1[i].getAttribute("selected") );
+            // IE 6 : true -> false -> false
+            // IE 7 : true -> false -> false
+            // IE 8 : selected -> (空) -> (空)
+            // IE 9 : true -> true -> true
+            // FF 36: true -> true -> true
+            // CH 41: true -> true -> true
+        }
+
+        options2[2].selected = true;
+
+        options2[1].selected = true;
+
+        options2[0].selected = true;
+
+        for (var i = 0, l = options2.length; i < l; i++) {
+
+            document.writeln( '<br>options2[' + i + '] : ' + options2[i].selected );
+            // IE 6 : true -> false -> false
+            // IE 7 : true -> false -> false
+            // IE 8 : true -> false -> false
+            // IE 9 : true -> false -> false
+            // FF 36: true -> false -> false
+            // CH 41: true -> false -> false
+        }
+    </script>
+</body>
+</html>

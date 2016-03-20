@@ -1,0 +1,121 @@
+/**
+ * 重置
+ */
+
+* {padding: 0;margin: 0;-moz-transition: all 0.5s ease-in;-webkit-transition: all 0.5s ease-in;-o-transition: all 0.5s ease-in;transition: all 0.5s ease-in;}
+li {list-style: none;}
+body {font-size: 14px;font-family: "微软雅黑","Microsoft Yahei";}
+img {max-width: 100%;}
+
+
+/**
+ * 栅格布局
+ */
+
+.grid:after{content: '\20';display: block;clear: both;visibility: hidden;height: 0}
+.grid>.col-1,
+.grid>.col-2,
+.grid>.col-3,
+.grid>.col-4,
+.grid>.col-5,
+.grid>.col-6,
+.grid>.col-7,
+.grid>.col-8,
+.grid>.col-9,
+.grid>.col-10,
+.grid>.col-11,
+.grid>.col-12{float: left;min-height: 1px;padding-left: 5px;padding-right: 5px;position: relative;box-sizing: border-box}
+.grid>.col-1{width: 8.33333333%}
+.grid>.col-2{width: 16.66666667%}
+.grid>.col-3{width: 25%}
+.grid>.col-4{width: 33.33333333%}
+.grid>.col-5{width: 41.66666667%}
+.grid>.col-6{width: 50%}
+.grid>.col-7{width: 58.33333333%}
+.grid>.col-8{width: 66.66666667%}
+.grid>.col-9{width: 75%}
+.grid>.col-10{width: 83.33333333%}
+.grid>.col-11{width: 91.66666667%}
+.grid>.col-12{width: 100%}
+
+
+/**
+ * 首屏 loading
+ */
+
+.mod_loading {background: url(http://newbox.kugou.com/static/images/box_v2/pic_loading.gif) no-repeat center;}
+.mod_loading * {opacity: 0;}
+
+
+/**
+ * 整体应用
+ */
+
+.mod_app {width: 960px;margin: 0 auto;}
+
+
+/**
+ * 搜索区域
+ */
+
+.mod_search {}
+.mod_search input[type="text"],
+.mod_search select {margin-right: 10px;}
+.mod_search input[type="radio"] {margin: 0 5px;vertical-align: -1px;}
+
+
+/**
+ * 展示区域
+ */
+
+.mod_showList {min-height: 610px;}
+.mod_showList .item {height: 290px;text-align: center;margin-bottom: 15px;}
+.mod_showList .pic {}
+.mod_showList .name {text-align: left;display: block;margin-bottom: 5px;max-height: 2.65em;overflow: hidden;color: #666;}
+.mod_showList .prize {font-size: 16px;margin-right: 10px;color: #f00;font-weight: bold;}
+.mod_showList .btn {display: inline-block;background: #EB9C23;padding: 2px 5px;border-radius: 5px;cursor: pointer;color: #fff;}
+.mod_showList .hasBuied {opacity: 0.5;}
+.mod_showList .hasBuied .btn {background: #f00;}
+.mod_showList .hasBuied .btn:before {content: "取消";}
+.mod_showList .noDataTip {padding: 50px;}
+
+
+/**
+ * 分页区域
+ */
+
+.mod_pageList {text-align: center;padding: 10px;}
+.mod_pageList a {margin: 0 5px;}
+.mod_pageList a {color: #333;cursor: pointer;}
+.mod_pageList .cur {color: #f00;cursor: default;}
+
+
+/**
+ * 记录（购物车）区域
+ */
+
+.mod_cart {}
+.mod_cart h3 {margin-bottom: 10px;}
+.mod_cart li {margin-bottom: 5px;}
+.mod_cart li:not(.grid) {border-top: 1px dashed #999;padding-top: 10px;}
+.mod_cart li:not(.grid) .btn {padding: 2px 5px;background: #DA2548;}
+.mod_cart li:not(.grid) .txt {font-size: 16px;}
+.mod_cart .name {display: block;white-space: nowrap;overflow: hidden;text-overflow: ellipsis;margin-bottom: 3px;}
+.mod_cart .btn {display: inline-block;padding: 0 5px;background: #eb9c23;color: #fff;cursor: pointer;border-radius: 5px;margin-bottom: 3px;}
+
+
+/**
+ * 原子类
+ */
+
+.el_blank {height: 10px;}
+.el_container {padding: 10px;background: #eee;}
+.el_space {display: inline-block;width: 5px;height: 1px;}
+
+
+/**
+ * 功能类
+ */
+
+.fn_right {float: right !important;}
+.fn_transparent {opacity: 0;}

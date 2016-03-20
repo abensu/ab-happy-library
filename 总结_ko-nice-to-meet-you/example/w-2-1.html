@@ -1,0 +1,59 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>computed 与 pureComputed</title>
+</head>
+
+<body>
+
+    名字：<input data-bind="value: name">
+    <br>
+    年龄：<input data-bind="value: age">
+    <br>
+    组合（pureComputed）：
+    <!-- <code data-bind="text: pureCombine"></code> -->
+    <br>
+    组合（computed）：
+    <!-- <code data-bind="text: combine"></code> -->
+
+    <script src="lib/knockout/3.3.0/knockout.js"></script><!-- 库 -->
+    <script>
+        var ViewModel, vm;
+
+        ViewModel = function() {
+
+            var
+                pureCombineTimes    = 0,
+                combineTimes        = 0;
+
+            this.name = ko.observable();
+            this.age = ko.observable();
+
+            this.hideProperty = ko.observable();
+
+            this.pureCombine = ko.pureComputed(function() {
+
+                console.log( "pureComputed 触发次数" + (++pureCombineTimes) );
+
+                // return this.hideProperty(); // UI 中无绑定的观察者
+                // return "1";
+                return this.name() + "芳龄" + this.age() + "岁";
+
+            }, this);
+
+            this.combine = ko.computed(function() {
+
+                console.log( "computed 触发次数" + (++combineTimes) );
+
+                // return this.hideProperty(); // UI 中无绑定的观察者
+                // return "1";
+                return this.name() + "芳龄" + this.age() + "岁";
+
+            }, this);
+        };
+
+        ko.applyBindings(vm = new ViewModel);
+   </script>
+</body>
+</html>

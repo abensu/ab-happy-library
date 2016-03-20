@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>2-6-2</title>
+</head>
+
+<body>
+    <input type="text" data-bind="value: firstName, valueUpdate: 'afterkeydown'"> -
+    现值：<span data-bind="text: fName">&nbsp;</span> -
+    促发次数：<span data-bind="text: fTimes">&nbsp;</span>
+    <br>
+    <input type="text" data-bind="value: secondName, valueUpdate: 'afterkeydown'"> -
+    现值：<span data-bind="text: sName">&nbsp;</span> -
+    促发次数：<span data-bind="text: sTimes">&nbsp;</span>
+
+    <script src="http://knockoutjs.com/downloads/knockout-3.3.0.js"></script>
+    <script>
+        function AppViewModel() {
+
+            this.firstName = ko.observable("Bob").extend( {rateLimit: 500} );
+            this.secondName = ko.observable("Tim").extend( {rateLimit: {timeout: 500, method: "notifyWhenChangesStop"} } );
+
+            this.fTimes = ko.observable(0);
+            this.sTimes = ko.observable(0);
+
+            this.fName = ko.computed(function() {
+                this.fTimes(this.fTimes() + 1);
+                return this.firstName().toUpperCase();
+            }, this);
+            this.sName = ko.computed(function() {
+                this.sTimes(this.sTimes() + 1);
+                return this.secondName().toUpperCase();
+            }, this);
+        };
+
+        ko.applyBindings( new AppViewModel() );
+    </script>
+</body>
+</html>

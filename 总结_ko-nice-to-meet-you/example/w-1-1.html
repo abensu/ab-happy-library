@@ -1,0 +1,288 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>演变（以下实例仅作教学之用，实际使用还需进一步优化）</title>
+</head>
+
+<body>
+    <h2>基础模板</h2>
+
+    <input placeholder="名字">
+    <input placeholder="年龄">
+    <input placeholder="特长">
+
+    <p>
+        名字：<a></a><br>
+        年龄：<a></a><br>
+        特长：<a></a>
+    </p>
+
+    <hr>
+
+    <h2>阶段一</h2>
+
+    <div id="level_1">
+        <input placeholder="名字">
+        <input placeholder="年龄">
+        <input placeholder="特长">
+
+        <p>
+            名字：<a></a><br>
+            年龄：<a></a><br>
+            特长：<a></a>
+        </p>
+    </div>
+
+    <script>
+        (function() {
+
+            var
+                node_doc    = document,
+                node_main   = node_doc.getElementById("level_1"),
+                node_name   = node_main.getElementsByTagName("input")[0],
+                node_age    = node_main.getElementsByTagName("input")[1],
+                node_spec   = node_main.getElementsByTagName("input")[2],
+                node_sName  = node_main.getElementsByTagName("a")[0],
+                node_sAge   = node_main.getElementsByTagName("a")[1],
+                node_sSpec  = node_main.getElementsByTagName("a")[2];
+
+            node_name.addEventListener("input", function(event) {
+
+                node_sName.textContent = this.value;
+
+            }, false);
+
+            node_age.addEventListener("input", function(event) {
+
+                node_sAge.textContent = this.value;
+
+            }, false);
+
+            node_spec.addEventListener("input", function(event) {
+
+                node_sSpec.textContent = this.value;
+
+            }, false);
+
+        })();
+    </script>
+
+    <hr>
+
+    <h2>阶段二</h2>
+
+    <div id="level_2">
+        <input placeholder="名字">
+        <input placeholder="年龄">
+        <input placeholder="特长">
+
+        <p>
+            名字：<a></a><br>
+            年龄：<a></a><br>
+            特长：<a></a>
+        </p>
+    </div>
+
+    <script>
+        (function() {
+
+            var
+                node_doc    = document,
+                node_main   = node_doc.getElementById("level_2"),
+                node_name   = node_main.getElementsByTagName("input")[0],
+                node_age    = node_main.getElementsByTagName("input")[1],
+                node_spec   = node_main.getElementsByTagName("input")[2],
+                node_sName  = node_main.getElementsByTagName("a")[0],
+                node_sAge   = node_main.getElementsByTagName("a")[1],
+                node_sSpec  = node_main.getElementsByTagName("a")[2],
+                data_store;
+
+            data_store = {
+                "name"  : "",
+                "age"   : 0,
+                "spec"  : "",
+                "set"   : function(type, val, node) {
+
+                                var
+                                    node_tar;
+
+                                (type in this) && (this[type] = val);
+
+                                node_tar = node ? node : {};
+
+                                node_tar.textContent = val;
+                            },
+                "get"   : function(type) {
+
+                                var this_tar;
+
+                                (type in this) && (this_tar = this[type]);
+
+                                return this_tar;
+                            }
+            };
+
+            // 设值
+
+            node_name.addEventListener("input", function(event) {
+
+                data_store.set("name", this.value, node_sName);
+
+            }, false);
+
+            node_age.addEventListener("input", function(event) {
+
+                data_store.set("age", this.value, node_sAge);
+
+            }, false);
+
+            node_spec.addEventListener("input", function(event) {
+
+                data_store.set("spec", this.value, node_sSpec);
+
+            }, false);
+
+            // 取值
+
+            node_sName.addEventListener("click", function(event) {
+
+                alert( data_store.get("name") );
+
+            }, false);
+
+            node_sAge.addEventListener("click", function(event) {
+
+                alert( data_store.get("age") );
+
+            }, false);
+
+            node_sSpec.addEventListener("click", function(event) {
+
+                alert( data_store.get("spec") );
+
+            }, false);
+
+        })();
+    </script>
+
+    <hr>
+
+    <h2>阶段三</h2>
+
+    <div id="level_3">
+        <input placeholder="名字" data-b="name">
+        <input placeholder="年龄" data-b="age">
+        <input placeholder="特长" data-b="spec">
+
+        <p>
+            名字：<a data-b="name" contenteditable="true"></a><br>
+            年龄：<a data-b="age" contenteditable="true"></a><br>
+            特长：<a data-b="spec" contenteditable="true"></a>
+        </p>
+    </div>
+
+    <script>
+        (function() {
+
+            var
+                ViewModel,
+                viewmodel;
+
+            ViewModel = function(root) {
+
+                var self = this;
+
+                self._model = {};
+
+                self._view = {};
+
+                self._root = root || document;
+
+                self._bindName = "data-b";
+            };
+
+            ViewModel.prototype.set = function(key, val) {
+
+                var self = this;
+
+                self._model[key] = val;
+            };
+
+            ViewModel.prototype.get = function(key) {
+
+                var self = this;
+
+                return self._model[key];
+            };
+
+            ViewModel.prototype.broadcast = function(key, exceptNode) {
+
+                var
+                    self        = this,
+                    val         = self.get(key),
+                    nodelist    = self._view[key],
+                    len         = nodelist.length,
+                    tar         = null,
+                    index       = 0;
+
+                for (; index < len; index++) {
+
+                    tar = nodelist[index];
+
+                    if (tar === exceptNode) { // 对于自身不再进行赋值操作
+                        continue;
+                    }
+
+                    "value" in tar ? tar.value = val : tar.textContent = val;
+                }
+            };
+
+            ViewModel.prototype.bind = function(key, node) {
+
+                var self = this;
+
+                !(key in self) && (self[key] = "");
+
+                node.addEventListener("input", function(event) {
+                    self.set(key, this.value || this.textContent);
+                    self.broadcast(key, this);
+                }, false);
+            };
+
+            ViewModel.prototype.init = function() {
+
+                var
+                    self        = this,
+                    bindName    = self._bindName,
+                    nodelist    = self._root.querySelectorAll("[" + bindName + "]"),
+                    len         = nodelist.length,
+                    index       = 0,
+                    tar         = null,
+                    nodeKey     = "";
+
+                for (; index < len; index ++) {
+
+                    tar     = nodelist[index];
+                    nodeKey = tar.getAttribute(bindName);
+
+                    if (nodeKey && !( /^\s+$/.test(nodeKey) ) ) {
+
+                        !self._view[nodeKey] && (self._view[nodeKey] = []);
+
+                        self._view[nodeKey].push(tar);
+
+                        self.bind(nodeKey, tar);
+                    }
+                }
+
+                return nodelist;
+            };
+
+            viewmodel = new ViewModel( document.getElementById('level_3') );
+
+            viewmodel.init();
+        })();
+    </script>
+</body>
+</html>

@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Components</title>
+</head>
+
+<body>
+
+    <ul data-bind="foreach: products">
+        <li class="product">
+            <strong data-bind="text: name"></strong>
+            <like-widget params="value: userRating"></like-widget>
+        </li>
+    </ul>
+
+    <script src="http://knockoutjs.com/downloads/knockout-3.3.0.js"></script>
+    <script>
+        ko.components.register('like-widget', {
+            viewModel: function(params) {
+
+                var self = this;
+
+                // Data: value is either null, 'like', or 'dislike'
+                self.chosenValue = params.value;
+                 
+                // Behaviors
+                self.like = function() { self.chosenValue('like'); };
+                self.dislike = function() { self.chosenValue('dislike'); };
+            },
+            template:
+                '<div class="like-or-dislike" data-bind="visible: !chosenValue()">\
+                    <button data-bind="click: like">Like it</button>\
+                    <button data-bind="click: dislike">Dislike it</button>\
+                </div>\
+                <div class="result" data-bind="visible: chosenValue">\
+                    You <strong data-bind="text: chosenValue"></strong> it\
+                </div>'
+        });
+
+        function Product(name, rating) {
+            this.name = name;
+            this.userRating = ko.observable(rating || null);
+        }
+         
+        function MyViewModel() {
+            this.products = [
+                new Product('Garlic bread'),
+                new Product('Pain au chocolat'),
+                new Product('Seagull spaghetti', 'like') // This one was already 'liked'
+            ];
+        }
+         
+        ko.applyBindings(new MyViewModel());
+    </script>
+</body>
+</html>
