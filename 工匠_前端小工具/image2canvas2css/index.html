@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>image -> canvas -> css</title>
+</head>
+<body>
+    <label for="imageInput">请选择文件<input type="file" id="imageInput" name="imageInput" accept="image/*" /></label>
+    <br />
+    <textarea id="cssOutput" disabled></textarea>
+    <br />
+    <a id="download" download="css-sprite.css">保存为...</a>
+
+    <script>
+        // 清除之前的记录
+        document.getElementById( "imageInput" ).value = "";
+        document.getElementById( "cssOutput" ).value = "";
+    </script>
+
+    <!-- 雪碧图配置文件 -->
+    <script src="src/CSS_SPRITE_OPTS.js"></script>
+    <!-- 图片通过 canvas+配置文件，转为 css 的程序 -->
+    <script src="src/image2canvas2css.js"></script>
+    <!-- 页面逻辑：读取图片，保存 css 文件 -->
+    <script>
+
+        // 创建 URL
+        function createObjectURL( blob_or_file ) {
+
+            if ( window.URL ) {
+
+                return window.URL.createObjectURL( blob_or_file );
+
+            } else if ( window.webkitURL ) {
+
+                return window.webkitURL.createObjectURL( blob_or_file );
+
+            } else {
+
+                return null;
+            }
+        };
+
+        // 释放对应 URL 的内存
+        function revokeObjectURL( objectURL ) {
+
+            if ( window.URL ) {
+
+                return window.URL.revokeObjectURL( objectURL );
+
+            } else if ( window.webkitURL ) {
+
+                return window.webkitURL.revokeObjectURL( objectURL );
+
+            } else {
+
+                return null;
+            }
+        };
+
+        // 创建 Blob
+        function createBlob( content, mime ) {
+
+            return new Blob( [ content ], { "type" : mime || "text\/plain" } );
+        };
+
+        document.getElementById( "imageInput" ).addEventListener( "change", function( e ) {
+
+            if ( !this.files.length ) return; // 没有文件，则中断
+
+            var d_url_img = createObjectURL( this.files[ 0 ] );
+
+            image2canvas2css.convert( {
+                url         : d_url_img
+                , opts      : CSS_SPRITE_OPTS
+                , callback  : function( res ) {
+
+                    document.getElementById( "cssOutput" ).value = res.styleCon;
+
+                    var d_url_css = createObjectURL( createBlob( res.styleCon, "text\/plain" ) );
+
+                    document.getElementById( "download" ).href = d_url_css;
+
+                    // 额，一释放后，点击下载就就没反应了。。。
+                    // revokeObjectURL( d_url_img );
+                    // revokeObjectURL( d_url_css );
+                }
+            } );
+
+        },false);
+    </script>
+</body>
+</html>
