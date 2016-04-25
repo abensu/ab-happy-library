@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>随机排列</title>
+</head>
+
+<body>
+    <p>原始数距为：[ 1, 2, 3, 4, 5 ] <button id="test_0">随机</button></p>
+    <p>随机后的数据：<span id="output_0">...</span></p>
+    <br>
+    <p>原始数距为："world" <button id="test_1">随机</button></p>
+    <p>随机后的数据：<span id="output_1">...</span></p>
+    <br>
+    <p>原始数距为：12345 <button id="test_2">随机</button></p>
+    <p>随机后的数据：<span id="output_2">...</span></p>
+    <br>
+    <p>原始数距为：{ h : 1, e : 2 } <button id="test_3">随机</button></p>
+    <p>随机后的数据：<span id="output_3">...</span></p>
+    <br>
+    <p>原始数距为：[ { h : 1 }, { e : 2 }, { l : 3 }, { l : 4 }, { o : 5 } ] <button id="test_4">随机</button></p>
+    <p>随机后的数据：<span id="output_4">...</span></p>
+    <br>
+    <p>原始数距为：undefined <button id="test_5">随机</button></p>
+    <p>随机后的数据：<span id="output_5">...</span></p>
+
+    <script src="scripts/randomSort.js"></script>
+    <script>
+        /**
+         * 测试用例
+         */
+        document.body.onclick = function( evt ) {
+
+            var
+                n_tar       = evt.target || evt.srcElement,
+                d_tar_id    = n_tar.id;
+
+            if ( /test_\d+/.test( d_tar_id ) ) {
+
+                var
+                    // 测试用例数据
+                    d_tests = [
+                                    [ 1, 2, 3, 4, 5 ]
+                                    , "world"
+                                    , 12345
+                                    , { h : 1, e : 2 }
+                                    , [ { h : 1 }, { e : 2 }, { l : 3 }, { l : 4 }, { o : 5 } ]
+                                    , undefined
+                                ],
+                    // 索引值，如 "test_0" 中的 "0"
+                    d_id    = +d_tar_id.replace( /^\D+/, '' ),
+                    // 随机结果
+                    d_res   = randomSort( d_tests[ d_id ] );
+
+                document.getElementById( "output_" + d_id ).textContent = JSON.stringify( d_res );
+            }
+        };
+    </script>
+</body>
+</html>
