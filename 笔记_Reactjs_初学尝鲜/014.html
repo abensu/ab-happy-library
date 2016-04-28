@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Redux basic example</title>
+    <script src="lib/redux/3.5.2/redux.min.js"></script>
+</head>
+<body>
+    <div>
+        <p>
+            Clicked: <span id="value">0</span> times
+            <button id="increment">+</button>
+            <button id="decrement">-</button>
+            <button id="incrementIfOdd">Increment if odd</button>
+            <button id="incrementAsync">Increment async</button>
+        </p>
+    </div>
+    <script type="zhushi">
+        function counter( state, action ) {
+            console.log( 'counter', state );
+            if ( typeof state === 'undefined' ) {
+                return 0
+            }
+            switch ( action.type ) {
+
+                case 'INCREMENT':
+                    return state + 1;
+
+                case 'DECREMENT':
+                    return state - 1;
+
+                default:
+                    return state;
+            }
+        };
+
+        function counter1( state, action ) {
+            console.log( 'counter1', state );
+            if ( typeof state === 'undefined' ) {
+                return 0
+            }
+
+            switch ( action.type ) {
+
+                case 'INCREMENT':
+                    return state + 1;
+
+                case 'DECREMENT':
+                    return state - 1;
+
+                default:
+                    return state;
+            }
+        };
+
+        var rootReducers = Redux.combineReducers( { counter : counter, counter1 : counter1 } )
+
+        var
+            // store     = Redux.createStore( counter ),
+            store     = Redux.createStore( rootReducers ),
+            valueEl   = document.getElementById( 'value' );
+
+        function render() {
+            console.log( store.getState() );
+            valueEl.innerHTML = store.getState().toString();
+        };
+
+        render();
+
+        store.subscribe( render );
+
+        document.getElementById( 'increment' ).addEventListener( 'click', function () {
+            store.dispatch( { type : 'INCREMENT' } );
+        });
+
+        document.getElementById( 'decrement' ).addEventListener( 'click', function () {
+            store.dispatch( { type : 'DECREMENT' } );
+        });
+
+        document.getElementById( 'incrementIfOdd' ).addEventListener( 'click', function () {
+            if ( store.getState() % 2 !== 0 ) {
+                store.dispatch( { type : 'INCREMENT' } );
+            }
+        });
+
+        document.getElementById( 'incrementAsync' ).addEventListener( 'click', function () {
+            setTimeout( function () {
+                store.dispatch( { type : 'INCREMENT' } );
+            }, 1000 );
+        } );
+    </script>
+    <script type="zhushi">
+        function yearReducer( state, action ) {
+
+            switch ( action.type ) {
+
+                case 'YEAR_UP' :
+                    return state + 1;
+
+                case 'YEAR_DOWN' :
+                    return state - 1;
+
+                default :
+                    return state || ( new Date ).getFullYear();
+            }
+        };
+
+        function monthReducer( state, action ) {
+
+            switch ( action.type ) {
+
+                case 'MONTH_UP' :
+                    return state + 1;
+
+                case 'MONTH_DOWN' :
+                    return state - 1;
+
+                default :
+                    return state || ( new Date ).getMonth();
+            }
+        };
+
+        var
+            rootReducer = Redux.combineReducers( { year : yearReducer, month : monthReducer } ),
+            store       = Redux.createStore( rootReducer );
+
+        console.log( store.getState() );
+        // 返回 { year : 2016, month : 3 }
+
+        store.dispatch( { type : 'YEAR_DOWN' } );
+        store.dispatch( { type : 'MONTH_UP' } );
+
+        console.log( store.getState() );
+        // 返回 { year : 2015, month : 4 }
+    </script>
+    <script type="zhushi">
+        function logger( store ) {
+
+            return function( next ) {
+
+                return function( action ) {
+
+                    console.log( 'logger', 'action', action );
+
+                    var result = next( action );
+
+                    console.log( 'logger', 'next state', store.getState() );
+
+                    return result;
+                };
+            };
+        };
+
+        function crashReporter( store ) {
+
+            return function( next ) {
+
+                return function( action ) {
+
+                    console.log( 'crashReporter', 'all', store, next, action );
+
+                    return next( action );
+                };
+            };
+        };
+
+        function reducer( state, action ) {
+
+            console.log( "reducer", "state", state );
+
+            switch ( action.type ) {
+
+                case "UP" :
+                    return state + 1;
+
+                default :
+                    return state || 0;
+            }
+        };
+
+        var
+            createStoreWithMiddleware   = Redux.applyMiddleware( logger, crashReporter )( Redux.createStore );
+            store                       = createStoreWithMiddleware( reducer );
+
+        store.dispatch( { type : "UP" } );
+    </script>
+    <script type="zhushi">
+        // reducer
+        function reducer( state, action ) {
+
+            console.log( action );
+
+            switch ( action.type ) {
+
+                case "UP" :
+                    return state + 1;
+
+                case "DOWN" :
+                    return state - 1;
+
+                default :
+                    return state || 0;
+            }
+        };
+
+        var store = Redux.createStore( reducer );
+
+        var storeActions = Redux.bindActionCreators( {
+            up : function() {
+                return { type : 'UP' };
+            },
+            down : function() {
+                return { type : 'DOWN' };
+            },
+            none : function() {
+                return { type : 'NONE' };
+            }
+        }, store.dispatch );
+
+        storeActions.up();    // 即 store.dispatch( { type : 'UP' } )
+        storeActions.down();  // 即 store.dispatch( { type : 'DOWN' } )
+        storeActions.none();  // 即 store.dispatch( { type : 'NONE' } )
+    </script>
+    <script type="zhushi">
+        // 函数 1
+        function fn_1( action ) {
+
+            console.log( "fn_1", action );
+
+            return action;
+        };
+
+        // 函数 2
+        function fn_2( action ) {
+
+            console.log( "fn_2", action );
+
+            return action;
+        };
+
+        // 函数 3
+        function fn_3( action ) {
+
+            console.log( "fn_3", action );
+
+            return action;
+        };
+
+        // reducer
+        function reducer( state, action ) {
+
+            console.log( "reducer", action );
+
+            switch ( action.type ) {
+
+                case "UP" :
+                    return state + 1;
+
+                case "DOWN" :
+                    return state - 1;
+
+                default :
+                    return state || 0;
+            }
+        };
+
+        var store = Redux.createStore( reducer );
+
+        var newDispatch = Redux.compose( fn_1, fn_2, fn_3, store.dispatch );
+
+        newDispatch( { type : "UP" } );
+        // 输出
+        // reducer Object { type="UP"}
+        // fn_3 Object { type="UP"}
+        // fn_2 Object { type="UP"}
+        // fn_1 Object { type="UP"}
+    </script>
+    <script>
+        function middleware_1( store ) {
+
+            return function( next ) {
+
+                return function( action ) {
+
+                    console.log( 'middleware_1' );
+
+                    return next( action );
+                };
+            };
+        };
+
+        function middleware_2( store ) {
+
+            return function( next ) {
+
+                return function( action ) {
+
+                    console.log( 'middleware_2' );
+
+                    return next( action );
+                };
+            };
+        };
+
+        // reducer
+        function reducer( state, action ) {
+
+            console.log( "reducer", state );
+
+            switch ( action.type ) {
+
+                case "UP" :
+                    return state + 1;
+
+                case "DOWN" :
+                    return state - 1;
+
+                default :
+                    return state;
+            }
+        };
+
+        var store = Redux.createStore( reducer, 5, Redux.applyMiddleware( middleware_1, middleware_2 ) );
+
+        store.dispatch( { type : "UP" } );
+    </script>
+</body>
+</html>
