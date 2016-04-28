@@ -51,17 +51,20 @@ Redux
 
 web 端官方事例：
 
-[官方事例](0001_0001.html)
+[官方事例](src/0001_0001.html)
 
 ### Reducer
 
 > `state` 生成器
 
 建议：
+
 1. 一个组件使用一个 `Reducer`
 
 特征：
+
 1. `Reducer` 必须含有两个参数，第一个是 `state`，第二个为 `action`
+
 1. `Reducer` 会根据 `action` 的 `type` 来对旧的 `state` 进行操作，返回新的 `state`
 
 ```
@@ -96,8 +99,11 @@ function counter( state, action ) {
 ```
 
 注意：
+
 1. 不要修改 `state`，而是每次返回新 `state`
+
 1. 在 `default` 情况下返回旧的 `state`。遇到未知的 `action` 时，一定要返回旧的 `state`
+
 1. 如果没有旧的 `State`，就返回一个 `initialState`，这很重要！！！
 
 ### Store
@@ -105,6 +111,7 @@ function counter( state, action ) {
 > `Reducer` 控制器
 
 建议：
+
 1. 一个应用只有一个 `Store`，一个 `Store` 可以含有多个 `Reducer`
 
 ```
@@ -138,9 +145,13 @@ Store
 ```
 
 职责：
+
 1. 维持应用的 `state`
+
 1. 提供 `getState()` 方法获取 `state`
+
 1. 提供 `dispatch(action)` 方法更新 `state`
+
 1. 通过 `subscribe( listener )` 注册监听器
 
 ### Action
@@ -152,13 +163,17 @@ store.dispatch( { type: 'INCREMENT' } );
 ```
 
 特征：
+
 1. `Action` 是一个普通对象，如这里的 `{ type: 'INCREMENT' }`
+
 1. Redux 要求 `Action` 内使用 `type` 字段来表示将要执行的动作
 
 注意：
+
 1. `Reducer.createStore` 时，会调用一次初始化 `action`（即 `{ type : "@@redux/INIT" }`），自己的应用最好不要有与此同名的 `action`
 
 衍生：
+
 1. actionCreator（action 生成器），方便修改 `Action` 和防止多次手写 `Action` 出错
 
 ```
@@ -287,7 +302,9 @@ storeActions.none();  // 即 store.dispatch( { type : 'NONE' } )
 > 组合多个函数，返回新的 `dispath`（链式调用）
 
 注意：
+
 1. 记得是从右到左调用哟，最右边必须是一个 `dispatch`，其他的函数均要返回自己的第一个参数作为后续函数的参数
+
 1. 下面的例子可以简单等价于：`fn_1( fn_2( fn_3( store.dispatch( { type : "UP" } ) ) ) )`
 
 ```
@@ -395,7 +412,9 @@ console.log( store.getState() );
 ```
 
 在 `combineReducers` 后：
+
 1. `state` 是独立的，每个 `reducer` 对应自己的一个 `state`，`reducer` 之间互不影响（仅该事例）
+
 2. `action` 是公用的，所以 `switch` 中的 `default` 必须写上，且返回默认的 `state`（不能是 undefined！）
 
 ### createStore( reducer, initialState, enhancer )
@@ -514,5 +533,7 @@ store.dispatch( { type : "UP" } );
 ## 参考
 
 * [深入浅出 - Redux - w3ctech - 中国最大的前端技术社区](http://www.w3ctech.com/topic/1561)
+
 * [Redux 核心概念 - 简书](http://www.jianshu.com/p/3334467e4b32)
+
 * [解读redux工作原理 - 推酷](http://www.tuicool.com/articles/ZZVJR3)
