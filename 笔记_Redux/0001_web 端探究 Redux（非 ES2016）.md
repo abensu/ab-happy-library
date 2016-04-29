@@ -18,7 +18,7 @@ Redux
     |                   参考：http://cnodejs.org/topic/565c65c4b31692e827fdd00c
     |
 	|- @prop {function} applyMiddleware
-    |                   范式：( ...middleware )
+    |                   范式：( ...redux_middleware )
     |                   说明：中间件，处于 action 与 store 之间
     |                   参考：http://www.tuicool.com/articles/VNnUfuZ
     |
@@ -33,11 +33,14 @@ Redux
     |                   参考：http://www.open-open.com/lib/view/open1451735705370.html
     |
 	|- @prop {function} compose
-    |                   范式：( ...chinFn, dispatch )
+    |                   范式：( ...fn_reutrn_action, dispatch )
     |                   说明：dispatch 的链式调用
     |                   参考：源码 123 行
     |
 	`- @prop {function} createStore
+                        范式：( reducer )
+                        范式：( reducer, initialState )
+                        范式：( reducer, enhancer )
                         范式：( reducer, initialState, enhancer )
                         说明：生成一个用于控制 state 树的 Redux store
                         参考：源码 204 行
