@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Redux 用例</title>
+    <link rel="stylesheet" href="lib/todomvc-css/base.css">
+    <link rel="stylesheet" href="lib/todomvc-css/index.css">
+</head>
+<body>
+    <section class="todoapp">
+		<header class="header">
+			<h1>todos</h1>
+			<input class="new-todo" placeholder="What needs to be done?" autofocus>
+		</header>
+		<section class="main">
+			<input class="toggle-all" id="toggle-all" type="checkbox">
+			<label for="toggle-all">Mark all as complete</label>
+            <ul class="todo-list"></ul>
+		</section>
+        <footer class="footer">
+			<span class="todo-count"></span>
+			<ul class="filters"></ul>
+            <button class="clear-completed">Clear completed</button>
+		</footer>
+	</section>
+	<footer class="info">
+		<p>Double-click to edit a todo</p>
+		<p>Written by <a href="https://github.com/addyosmani">Addy Osmani</a></p>
+		<p>Part of <a href="http://todomvc.com">TodoMVC</a></p>
+	</footer>
+
+    <script type="text/tmpl" id="tmpl_todo_item">
+        <!--
+            state 说明：
+                ""            : 普通状态
+                "completed"   : 完成状态或选中状态
+                "editing"     : 编辑状态
+        -->
+        <li class="<% state %>" data-item-id="<% id %>">
+            <div class="view">
+                <input type="checkbox" class="toggle" <% checked %>>
+                <label><% content %></label>
+                <button class="destroy"></button>
+            </div>
+            <input value="<% content %>" class="edit">
+        </li>
+    </script>
+    <script type="text/tmpl" id="tmpl_type_item">
+        <li>
+            <a href="javascript:;" class="<% cls %>" data-type="<% name %>"><% name %></a>
+        </li>
+    </script>
+    <script type="text/tmpl" id="tmpl_todo_count">
+        <strong><% number %></strong> item left
+    </script>
+
+    <script src="http://static.sy.kugou.com/lib/jquery/1.11.3/jquery.min.js"></script>
+    <script src="lib/redux/3.5.2/redux.min.js"></script>
+    <script>
+        var glo_todo_item_id = 0; // 累加的索引
+
+        /**
+         * todo 项
+         */
+        function TodoItem( todoData ) {
+
+            var
+                self = this,
+                data = todoData || {};
+
+            self.id = data.id || +new Date;
+
+            self.content = data.content || '';
+
+            self.completed = data.completed || false;
+        };
+
+        /**
+         * todo 列表-reducer
+         *
+         * @param {object} action : []
+         *    |
+         *    |- "ADD"         -> { type, content, completed }
+         *    |- "MODIFY_ONE"  -> { type, id, content }
+         *    |- "REMOVE_ONE"  -> { type, id }
+         *    |- "REMOVE_COMPLETED" -> { type }
+         *    |- "SELECT_ALL"  -> { type }
+         *    |- "CANCEL_ALL"  -> { type }
+         *    |- "SELECT_ONE"  -> { type, id }
+         *    `- "CANCEL_ONE"  -> { type, id }
+         */
+        function todoListReducer( state, action ) {
+
+            if ( state === undefined ) {
+
+                return [];
+            }
+
+            switch ( action.type ) {
+
+                // 添加 todo 项
+                case "ADD" :
+
+                    var newList = [].concat( state );
+
+                    newList.push(
+                        new TodoItem(
+                            {
+                                id          : ++glo_todo_item_id
+                                , content   : action.content
+                                , completed : action.completed
+                            }
+                        )
+                    );
+
+                    return newList;
+
+                // 修改某个 todo 项
+                case "MODIFY_ONE" :
+
+                    var newList = [].concat( state );
+
+                    for ( var i = 0, len = newList.length; i < len; i++ ) {
+
+                        if ( newList[ i ].id === +action.id ) {
+
+                            newList[ i ].content = action.content;
+
+                            break;
+                        }
+                    }
+
+                    return newList;
+
+                // 删除某个 todo 项
+                case "REMOVE_ONE" :
+
+                    var newList = [].concat( state );
+
+                    for ( var i = 0, len = newList.length; i < len; i++ ) {
+
+                        if ( newList[ i ].id === +action.id ) {
+
+                            newList.splice( i, 1 );
+
+                            break;
+                        }
+                    }
+
+                    return newList;
+
+                // 删除所有 completed 的 todo 项
+                case "REMOVE_COMPLETED" :
+
+                    var newList = [];
+
+                    for ( var i = 0, len = state.length; i < len; i++ ) {
+
+                        if ( !state[ i ].completed ) {
+
+                            newList.push( state[ i ] );
+                        }
+                    }
+
+                    return newList;
+
+                // 选中某个 todo 项
+                case "SELECT_ONE" :
+
+                    var newList = [].concat( state );
+
+                    for ( var i = 0, len = newList.length; i < len; i++ ) {
+
+                        if ( newList[ i ].id === +action.id ) {
+
+                            newList[ i ].completed = true;
+
+                            break;
+                        }
+                    }
+
+                    return newList;
+
+                // 取消某个 todo 项
+                case "CANCEL_ONE" :
+
+                    var newList = [].concat( state );
+
+                    for ( var i = 0, len = newList.length; i < len; i++ ) {
+
+                        if ( newList[ i ].id === +action.id ) {
+
+                            newList[ i ].completed = false;
+
+                            break;
+                        }
+                    }
+
+                    return newList;
+
+                // 选中所有 todo 项
+                case "SELECT_ALL" :
+
+                    var newList = [].concat( state );
+
+                    newList.forEach( function( cell, index ) {
+
+                        cell.completed = true;
+                    } );
+
+                    return newList;
+
+                // 取消所有 todo 项
+                case "CANCEL_ALL" :
+
+                    var newList = [].concat( state );
+
+                    newList.forEach( function( cell, index ) {
+
+                        cell.completed = false;
+                    } );
+
+                    return newList;
+
+                // 默认
+                default :
+                    return state;
+            }
+        };
+
+        /**
+         * 类型列表-reducer
+         *
+         * @param {object} action : []
+         *    |
+         *    `- "ALL" | "ACTIVE" | "COMPLETED" -> { type }
+         */
+        function typeListReducer( state, action ) {
+
+            if ( state === undefined ) {
+
+                return [
+                    { name : "All", selected : true }
+                    , { name : "Active", selected : false }
+                    , { name : "Completed", selected : false }
+                ];
+            }
+
+            function select_target_and_return_state( type ) {
+
+                var newList = [].concat( state );
+
+                for ( var i = 0, len = newList.length; i < len; i++ ) {
+
+                    newList[ i ].selected = ( newList[ i ].name === type );
+                }
+
+                return newList;
+            };
+
+            switch ( action.type ) {
+
+                // 所有分类
+                case "ALL" :
+                    return select_target_and_return_state( "All" );
+
+                // 激活分类
+                case "ACTIVE" :
+                    return select_target_and_return_state( "Active" );
+
+                // 完成分类
+                case "COMPLETED" :
+                    return select_target_and_return_state( "Completed" );
+
+                // 默认
+                default:
+                    return state;
+            }
+        };
+
+        /**
+         * 中间件 - 统计
+         */
+        function tongji( store ) {
+
+            return function( next ) {
+
+                return function( action ) {
+
+                    console.log( "统计：", action );
+
+                    return next( action );
+                };
+            };
+        };
+
+        /**
+         * 简单的模板
+         */
+        function simpleTemple( tmplStr, data ) {
+
+            var
+                d_tmplStr   = tmplStr || '',
+                d_data      = data || {};
+
+            return d_tmplStr.replace( /<%([\s\S]+?)%>/g, function( str ) {
+
+                var d_key = str.replace( /(<%\s*)|(\s*%>)/g, '' );
+
+                return d_key in d_data ? d_data[ d_key ] : '';
+            } );
+        };
+
+        /**
+         * 列表渲染
+         */
+        function todoListRender( type, dataList ) {
+
+            var
+                d_dataList  = dataList || [],
+                d_type      = type,
+                d_tmpl      = $( "#tmpl_todo_item" ).html(),
+                d_nodes     = '',
+                n_ul        = $( ".todo-list" );
+
+            d_dataList.forEach( function( cell, index, raw_arr ) {
+
+                var d_raw = simpleTemple( d_tmpl, {
+                    state       : cell.completed ? "completed" : ''
+                    , content   : cell.content
+                    , checked   : cell.completed ? "checked" : ''
+                    , id        : cell.id
+                } );
+
+                switch ( d_type ) {
+
+                    case "All" :
+                        d_nodes += d_raw;
+                        break;
+
+                    case "Active" :
+                        !cell.completed && ( d_nodes += d_raw );
+                        break;
+
+                    case "Completed" :
+                        cell.completed && ( d_nodes += d_raw );
+                        break;
+                }
+            } );
+
+            n_ul.html( d_nodes );
+        };
+
+        /**
+         * 类型列表渲染
+         */
+        function typeListRender( type, dataList ) {
+
+            var
+                d_dataList  = dataList || [],
+                d_type      = type,
+                d_tmpl      = $( "#tmpl_type_item" ).html(),
+                d_nodes     = '',
+                n_ul        = $( ".filters" );
+
+            d_dataList.forEach( function( cell, index, raw_arr ) {
+
+                d_nodes += simpleTemple( d_tmpl, {
+                    name    : cell.name
+                    , cls   : cell.selected ? "selected" : ''
+                } );
+            } );
+
+            n_ul.html( d_nodes );
+        };
+
+        /**
+         * 剩余数渲染，显示或隐藏 clear-completed 按钮，全部选中控制
+         */
+         function todoCountRender_clearBtnControl_selectAllControl( dataList ) {
+
+             var
+                 d_dataList = dataList || [],
+                 d_tmpl     = $( "#tmpl_todo_count" ).html(),
+                 d_nodes    = '',
+                 n_tar      = $( ".todo-count" ),
+                 d_total    = d_dataList.length;
+
+             d_dataList.forEach( function( cell, index, raw_arr ) {
+
+                cell.completed && ( d_total -= 1 );
+             } );
+
+             d_nodes = simpleTemple( d_tmpl, {
+                 number : d_total
+             } );
+
+             n_tar.html( d_nodes );
+
+             // clear-completed 按钮，显示或隐藏
+             $( ".clear-completed" ).css( "display", d_total < d_dataList.length && d_dataList.length ? '' : "none" );
+
+             // toggle-all 复选框状态
+             $( ".toggle-all" ).prop( "checked", !d_total && d_dataList.length );
+         };
+
+        /**
+         * 主程序
+         */
+        var
+            appReducer = Redux.combineReducers( {
+                todoList    : todoListReducer
+                , typeList  : typeListReducer
+            } );
+
+        var appStore = Redux.createStore( appReducer, Redux.applyMiddleware( tongji ) );
+
+        /**
+         * 渲染
+         */
+        function render() {
+
+            var
+                d_all_store         = appStore.getState(),
+                d_todoList_store    = d_all_store.todoList,
+                d_typeList_store    = d_all_store.typeList;
+
+            var d_type = ( function() {
+
+                for ( var i = 0, len = d_typeList_store.length; i < len; i++ ) {
+
+                    var d_cell = d_typeList_store[ i ];
+
+                    if ( d_cell.selected ) {
+
+                        return d_cell.name;
+                    }
+                }
+            } )();
+
+            todoListRender( d_type, d_todoList_store );
+
+            typeListRender( d_type, d_typeList_store );
+
+            todoCountRender_clearBtnControl_selectAllControl( d_todoList_store );
+        };
+
+        render();
+
+        /**
+         * 订阅事件
+         */
+        appStore.subscribe( render );
+
+        /**
+         * 绑定
+         */
+        $( "body" )
+            // 选择类型
+            .delegate( "[data-type]", "click", function() {
+
+                var n_tar = $( this );
+
+                // 非当前可以点击
+                if ( !n_tar.hasClass( "selected" ) ) {
+
+                    appStore.dispatch( {
+                        type : n_tar.attr( "data-type" ).toUpperCase()
+                    } );
+                }
+            } )
+            // 复选按钮（选单个）
+            .delegate( ".toggle", "click", function() {
+
+                var
+                    n_tar       = $( this ),
+                    d_item_id   = +n_tar.parent().parent().attr( "data-item-id" );
+
+                appStore.dispatch( {
+                    type : n_tar.prop( "checked" ) ? "SELECT_ONE" : "CANCEL_ONE"
+                    , id : d_item_id
+                } );
+            } )
+            // 复选按钮（选全部）
+            .delegate( ".toggle-all", "click", function() {
+
+                appStore.dispatch( {
+                    type : $( this ).prop( "checked" ) ? "SELECT_ALL" : "CANCEL_ALL"
+                } );
+            } )
+            // 清除某个项
+            .delegate( ".destroy", "click", function() {
+
+                var
+                    n_tar       = $( this ),
+                    d_item_id   = +n_tar.parent().parent().attr( "data-item-id" );
+
+                appStore.dispatch( {
+                    type : "REMOVE_ONE"
+                    , id : d_item_id
+                } );
+            } )
+            // 清除 completed 项
+            .delegate( ".clear-completed", "click", function() {
+
+                appStore.dispatch( {
+                    type : "REMOVE_COMPLETED"
+                } );
+            } )
+            // 头部输入框
+            .delegate( ".new-todo", "keypress", function( evt ) {
+
+                var
+                    d_tar       = evt.target,
+                    d_val       = d_tar.value,
+                    d_keycode   = evt.keyCode;
+
+                if ( d_keycode === 13 ) {
+
+                    if ( /^\s*$/.test( d_val ) ) {
+
+                        alert( "请输入值" );
+                    }
+
+                    appStore.dispatch( {
+                        type : "ADD"
+                        , content : d_val
+                        , completed : false
+                    } );
+                }
+            } )
+            // 显示转态变为编辑状态
+            .delegate( ".view>label", "dblclick", function( evt ) {
+
+                $( this )
+                    .parent().parent().addClass( "editing" )
+                        .find( ".edit" ).focus();
+            } )
+            // 编辑状态变为显示转态
+            .delegate( ".edit", "blur keypress", function( evt ) {
+
+                if ( evt.keyCode === 13 || evt.type === "focusout" ) {
+
+                    var
+                        n_tar       = $( this ),
+                        d_val       = n_tar.val(),
+                        d_item_id   = +n_tar.parent().attr( "data-item-id" );
+
+                    n_tar.parent().removeClass( "editing" );
+
+                    if ( !( /^\s*$/.test( d_val ) ) ) {
+
+                        appStore.dispatch( {
+                            type        : "MODIFY_ONE"
+                            , id        : d_item_id
+                            , content   : d_val
+                        } );
+                    }
+                }
+            } )
+            ;
+    </script>
+</body>
+</html>
