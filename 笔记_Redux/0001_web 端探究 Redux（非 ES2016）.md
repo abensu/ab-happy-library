@@ -8,6 +8,7 @@
 
 源码：[https://npmcdn.com/redux@3.5.2/dist/redux.js](https://npmcdn.com/redux@3.5.2/dist/redux.js)
 
+
 ## Redux 的 api
 
 ```
@@ -45,6 +46,7 @@ Redux
                         说明：生成一个用于控制 state 树的 Redux store
                         参考：源码 204 行
 ```
+
 
 ## Redux 中的 Reducer、Store 和 Action
 
@@ -418,7 +420,7 @@ console.log( store.getState() );
 
 1. `state` 是独立的，每个 `reducer` 对应自己的一个 `state`，`reducer` 之间互不影响（仅该事例）
 
-2. `action` 是公用的，所以 `switch` 中的 `default` 必须写上，且返回默认的 `state`（不能是 undefined！）
+1. `action` 是公用的，所以 `switch` 中的 `default` 必须写上，且返回默认的 `state`（不能是 undefined！）
 
 ### createStore( reducer, initialState, enhancer )
 
@@ -438,7 +440,7 @@ console.log( store.getState() );
 
     initialState
         【可选参数】任意类型。初始的 state。用于融合服务端的通用应用和 state，或恢复上一次序列化的用户会话。
-        如果你使用了 `combineReducers` 生成了一个根 reducer 函数，该参数必须为对象，且结构必须和所生成的根 reducer 一致（key 都要有）。
+        如果你使用了 `combineReducers` 生成了一个根 reducer 函数，该参数必须为对象，且结构必须和所生成的根 reducer 一致（key 都要有）。【这个解释使用问题的。。。请看“注意”章节】
 
     enhancer
         【可选参数】函数类型。store 增强器。使用第三方功能（如中间件、时间穿梭、持久化等等）去增强 store。store 增强器只能是 `applyMiddleware()`。
@@ -474,6 +476,69 @@ var store = Redux.createStore( reducer, 5 );
 ```
 
 如果无 `initialState`，会输出 `undefined`
+
+#### createStore( reducer, enhancer ) 范例
+
+```
+// 中间件1
+function middleware_1( store ) {
+
+    return function( next ) {
+
+        return function( action ) {
+
+            console.log( 'middleware_1' );
+
+            return next( action );
+        };
+    };
+};
+
+// 中间件2
+function middleware_2( store ) {
+
+    return function( next ) {
+
+        return function( action ) {
+
+            console.log( 'middleware_2' );
+
+            return next( action );
+        };
+    };
+};
+
+// reducer
+function reducer( state, action ) {
+
+    console.log( "reducer", state );
+
+    if ( state === undefined ) {
+
+        return 5;
+    }
+
+    switch ( action.type ) {
+
+        case "UP" :
+            return state + 1;
+
+        case "DOWN" :
+            return state - 1;
+
+        default :
+            return state;
+    }
+};
+
+var store = Redux.createStore( reducer, Redux.applyMiddleware( middleware_1, middleware_2 ) );
+
+store.dispatch( { type : "UP" } );
+// 输出：
+// middleware_1
+// middleware_2
+// reducer 5
+```
 
 #### createStore( reducer, initialState, enhancer ) 范例
 
@@ -533,9 +598,96 @@ store.dispatch( { type : "UP" } );
 // reducer 5
 ```
 
+
 ## 案例
 
 * [Redux + jQuery 的 TODOMVC](src/0001_0002.html)
+
+
+## 注意
+
+### `combineReducers` （无有效默认值返回）不能成功使用带 `initialState` 参数的 `Redux.createStore` 函数
+
+错误事例：
+
+```
+// head
+function headReducer( state, action ) {
+
+    console.log( "headReducer", state );
+
+    return state;
+};
+
+// body
+function bodyReducer( state, action ) {
+
+    console.log( "bodyReducer", state );
+
+    return state;
+};
+
+var rootReducer = Redux.combineReducers( {
+    head : headReducer
+    , body : bodyReducer
+} );
+
+var store = Redux.createStore( rootReducer, {
+    head : "head"
+    , body : "body"
+} );
+// 报错：
+// Error: Reducer "head" returned undefined during initialization. If the state passed to the reducer is undefined, you must explicitly return the initial state. The initial state may not be undefined.
+```
+
+正确事例：
+
+```
+var
+    rootReducer,
+    defaults = { // 默认值
+        headReducer   : "head"
+        , bodyReducer : "body"
+    };
+
+// head
+function headReducer( state, action ) {
+
+    if ( state === undefined ) { // 默认返回指定默认值
+
+        // return "head";
+        // or
+        return defaults.headReducer;
+    }
+
+    console.log( "headReducer", state );
+
+    return state;
+};
+
+// body
+function bodyReducer( state, action ) {
+
+    if ( state === undefined ) { // 默认返回指定默认值
+
+        // return "body";
+        // or
+        return defaults.bodyReducer;
+    }
+
+    console.log( "bodyReducer", state );
+
+    return state;
+};
+
+rootReducer = Redux.combineReducers( {
+    head   : headReducer
+    , body : bodyReducer
+} );
+
+var store = Redux.createStore( rootReducer );
+```
+
 
 ## 参考
 

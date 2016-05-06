@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>react-redux basic example</title>
+    <script src="lib/react/0.14.7/react.js"></script>
+    <script src="lib/react/0.14.7/react-dom.min.js"></script>
+    <script src="lib/redux/3.5.2/redux.min.js"></script>
+    <script src="lib/react-redux/3.1.2/react-redux.js"></script>
+    <script src="lib/babel-core/browser.min.js"></script>
+</head>
+<body>
+    <div id="example"></div>
+
+    <script type="text/babel">
+
+        // import { Provider, connect } from "react-redux";
+
+        var App = {
+                render : function() {
+                    return(
+                        <h1>1</h1>
+                    );
+                }
+            };
+        // var Provider = new ReactRedux.Provider( { store : 0 } );
+
+        var reducer = ( state, action ) => state || 0;
+        var store = Redux.createStore( reducer );
+        var Provider = new ReactRedux.Provider( { store : store } );
+        var connect = ReactRedux.connect;
+
+        ReactDOM.render(
+            <Provider store={store}>
+                <App />
+            </Provider>,
+            document.getElementById( "example" )
+        );
+    </script>
+</body>
+</html>
