@@ -133,6 +133,8 @@
 
 从左到右依次为：`stretch` `flex-start` `center` `flex-end`
 
+### > `View` 组件不支持 `onPress` 事件，`Touchable` 系列组件才支持
+
 ## 文章收集
 
 暂无
