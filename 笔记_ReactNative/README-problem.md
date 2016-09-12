@@ -50,12 +50,39 @@
 环境：
 
 * react [ 15.3.1 ]
-* react-native [ 0.32.1 ]
+* react-native [ 0.33.0 ]
 
 ### 解决方法
 
 根据他的提示一步一步试，最后点击 `<菜单栏> -> Dev Settiongs -> DEBUGGING / Debug server host & port for device` 填写本地服务器的地址，如 `192.168.88.105:8081`，重新点击 `<菜单栏> -> Reload` 即可
 
+
+## window 的安卓模拟器下，Reload 不能更新 index.android.js 修改的内容
+
+问题现象：
+
+* 修改完 js 后，reload 无效果
+
+问题来源：
+
+* 拉取数据超时，导致文件更新失败
+
+环境：
+
+* react [ 15.3.1 ]
+* react-native [ 0.32.1 ]
+
+参考：
+
+* [解决React-Native reload后代码不更新问题 ](http://blog.csdn.net/new_Aiden/article/details/52001790)
+
+### 解决方法
+
+1. 找到文件 `<项目>/node_modules/react-native/packager/react-packager/src/node-haste/FileWatcher/index.js`【react native 0.32】或 `<项目>/node_modules/react-native/node_modules/node-haste/lib/FileWatcher/index.js`【react native 0.24】
+
+2. 将 `var MAX_WAIT_TIME = 120000` 改为 `var MAX_WAIT_TIME = 360000`
+
+3. 关掉测试服务器，重新执行 `react-native run-android`
 
 ## 文章收集
 
