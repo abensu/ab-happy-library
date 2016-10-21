@@ -135,6 +135,78 @@
 
 ### > `View` 组件不支持 `onPress` 事件，`Touchable` 系列组件才支持
 
+### > 触摸事件（较底层的，非封装好的 onPress）
+
+* [React Native 触摸事件处理详解](http://www.tuicool.com/articles/IreaYfv)
+
+### > 浏览器启动 App【暂时发现：仅成功打包后的文件有效，调试阶段是实现不了的】
+
+修改文件 `<项目根目录>/android/app/src/main/AndroidManifest.xml`，具体如下：
+
+```
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    ...
+    <application
+      android:name=".MainApplication"
+      android:allowBackup="true"
+      android:label="@string/app_name"
+      android:icon="@mipmap/ic_launcher"
+      android:theme="@style/AppTheme">
+      <activity
+        android:name=".MainActivity"
+        android:label="@string/app_name"
+        android:configChanges="keyboard|keyboardHidden|orientation|screenSize">
+        <intent-filter>
+            <action android:name="android.intent.action.MAIN" />
+            <category android:name="android.intent.category.LAUNCHER" />
+        </intent-filter>
+
+        <!-- 在浏览器通过 mylovelyapp://start 启动 app -->
+        <intent-filter>
+            <action android:name="android.intent.action.VIEW" />
+            <category android:name="android.intent.category.DEFAULT" />
+            <category android:name="android.intent.category.BROWSABLE" />
+            <data android:scheme="mylovelyapp"
+                  android:host="start" />
+        </intent-filter>
+
+        <!-- 在浏览器通过 http://mylovelyapp.com/download 启动 app -->
+        <!-- √ http://mylovelyapp.com/download -->
+        <!-- √ http://mylovelyapp.com/download?v=1 -->
+        <!-- × http://mylovelyapp.com/download/ -->
+        <!-- × http://mylovelyapp.com/download/t.html -->
+        <intent-filter>
+            <action android:name="android.intent.action.VIEW" />
+            <category android:name="android.intent.category.DEFAULT" />
+            <category android:name="android.intent.category.BROWSABLE" />
+            <data android:scheme="http"
+                  android:host="mylovelyapp.com"
+                  android:path="/download" />
+        </intent-filter>
+
+        <!-- 在浏览器通过 http://mylovelyapp.com/download/t.html 启动 app -->
+        <intent-filter>
+            <action android:name="android.intent.action.VIEW" />
+            <category android:name="android.intent.category.DEFAULT" />
+            <category android:name="android.intent.category.BROWSABLE" />
+            <data android:scheme="http"
+                  android:host="mylovelyapp.com"
+                  android:path="/download/t.html" />
+        </intent-filter>
+
+      </activity>
+      <activity android:name="com.facebook.react.devsupport.DevSettingsActivity" />
+    </application>
+</manifest>
+```
+
+注意：
+
+1. `AndroidManifest.xml` 默认的 `intent-filter` 不用改（原来那个是通过手机主页的图标打开 app），新加一个 `intent-filter` 用于浏览器调起 app
+
+2. `<a href="[scheme]://[host]/[path]?[query]">启动应用程序</a>` 方括号对应的是 `android:scheme`、`android:host`、`android:path`、`android:query`（貌似 `android:host` 加上端口号就会匹配失败，就算加上 `android:port` 也没用），点击这样的 `http` 链接后浏览器会弹窗问你选择哪种 app 打开，其中有个选项就是你的 app
+
+
 ## 文章收集
 
 暂无
