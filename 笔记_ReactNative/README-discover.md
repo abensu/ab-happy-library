@@ -139,7 +139,9 @@
 
 * [React Native 触摸事件处理详解](http://www.tuicool.com/articles/IreaYfv)
 
-### > 浏览器启动 App【暂时发现：仅成功打包后的文件有效，调试阶段是实现不了的】
+### > 修改了 xml、java 等文件，务必在 `<项目根目录>/android` 运行 `gradlew clean`，不然仅仅 `react-native run-android`，是会报错的【Android】
+
+### > 浏览器启动 App【Android】【暂时发现：仅成功打包后的文件有效，调试阶段是实现不了的】
 
 修改文件 `<项目根目录>/android/app/src/main/AndroidManifest.xml`，具体如下：
 
@@ -205,6 +207,20 @@
 1. `AndroidManifest.xml` 默认的 `intent-filter` 不用改（原来那个是通过手机主页的图标打开 app），新加一个 `intent-filter` 用于浏览器调起 app
 
 2. `<a href="[scheme]://[host]/[path]?[query]">启动应用程序</a>` 方括号对应的是 `android:scheme`、`android:host`、`android:path`、`android:query`（貌似 `android:host` 加上端口号就会匹配失败，就算加上 `android:port` 也没用），点击这样的 `http` 链接后浏览器会弹窗问你选择哪种 app 打开，其中有个选项就是你的 app
+
+### > 修改图标下的 app 文字【Android】
+
+修改文件 `<项目根目录>/android/app/src/main/res/values/strings.xml`，具体如下：
+
+```
+<resources>
+    <string name="app_name">我的App名字</string>
+</resources>
+```
+
+### > 编写原生组件，请参考下面链接
+
+* [React-Native开发之原生模块封装（Android）](http://blog.csdn.net/qq_25827845/article/details/52862892)
 
 
 ## 文章收集
