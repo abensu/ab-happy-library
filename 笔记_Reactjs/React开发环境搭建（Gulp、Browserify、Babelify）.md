@@ -35,8 +35,7 @@ project
         |- gulp                 【必须，流程执行】
         |- gulp-rename          【可选，文件重命名】
         |- gulp-replace         【可选，文件中对应字段的替换】
-        |- gulp-sequence        【可选，task 按顺序执行】
-        |- gulp-streamify       【可选，将不能识别的流转为 gulp 流，让其他 gulp 插件可用，如 gulp-yuicompressor】
+        |- gulp-rev-append      【可选，替换文件中 ?rev=xxx 字段，xxx 为文件 hash 值，资源路径字段要使用相对路径】
         |- gulp-yuicompressor   【可选，代码压缩，用 gulp-uglify 会压缩过度导致代码出错，所以用这个】
         `- vinyl-source-stream  【必须，将 browserify 流变为 gulp 流】
 ```
@@ -70,7 +69,7 @@ gulp.task( 'react', function() {
 gulp.task( 'default', [ 'react' ] );
 ```
 
-#### `project/subProject/bin/gulpfile.js` 升级版【附加代码压缩并生成 .min.js 文件、自动执行更新、更新 index.html 对应位置的时间戳】
+#### `project/subProject/bin/gulpfile.js` 升级版【附加可序列化执行、代码压缩并生成 .min.js 文件、自动执行更新、更新 index.html 对应位置的时间戳等功能】
 
 ```
 var gulp            = require( '../../node_modules/gulp' );
@@ -79,53 +78,80 @@ var babelify        = require( '../../node_modules/babelify' );
 var source          = require( '../../node_modules/vinyl-source-stream' );
 var rename          = require( '../../node_modules/gulp-rename' );
 var yuicompress     = require( '../../node_modules/gulp-yuicompressor' );
-var streamify       = require( '../../node_modules/gulp-streamify' );
 var replace         = require( '../../node_modules/gulp-replace' );
-var gulpSequence    = require('../../node_modules/gulp-sequence');
+var rev             = require( '../../node_modules/gulp-rev-append' );
 
-gulp.task( 'index-mark', function() {
+// jsx 文件转为 js
+function task_jsx2js() {
 
-    var d_mark = +new Date();
+    return new Promise( function( resolve, rejcet ) {
 
-    // 修改 index.html 的时间戳（带 gulpv 字段）
-    return gulp.src( '../index.html' )
-        .pipe( replace( /(\?|\&)gulpv[=]*[^&'"\s]*/, '$1gulpv=' + d_mark ) )
-        .pipe( gulp.dest( '../' ) )
+        browserify( '../com/app.jsx' )
+            // babel 预处理文件
+            .transform( babelify, { presets: [ 'es2015', 'react', 'stage-2' ] } )
+            // 转换为 gulp 能识别的流
+            .bundle()
+            // 合并输出为 app.js
+            .pipe( source( '../dist/app.js' ) )
+            // 将未压缩版放在 dist 目录
+            .pipe( gulp.dest( './' ) )
+            // 执行 Promise.resolve
+            .on( 'end', resolve )
+            ;
+    } );
+};
+
+// js 压缩
+function task_jsmin() {
+
+    return new Promise( function( resolve, rejcet ) {
+
+        gulp.src( '../dist/app.js' )
+            // 新建压缩文件
+            .pipe( rename( '../dist/app.min.js' ) )
+            // 压缩
+            .pipe( yuicompress( { type : 'js' } ) )
+            // 输出到 source 所操作的文件夹
+            .pipe( gulp.dest( '../dist' ) )
+            // 执行 Promise.resolve
+            .on( 'end', resolve )
+            ;
+    } );
+};
+
+// 修改 index.html 的时间戳（带 gulpv 字段）
+function task_index_mark() {
+
+    return new Promise( function( resolve, rejcet ) {
+
+        // 修改 index.html 的时间戳（带 gulpv 字段）
+        return gulp.src( '../index.html' )
+            // 修改文件中带 ?rev=xxx 的字段（正则为 (?:href|src)="(.*)[\?]rev=(.*)[\"] ）
+            .pipe( rev() )
+            .pipe( gulp.dest( '../' ) )
+            .on( 'end', resolve )
+            ;
+    } );
+};
+
+// 所有任务开始执行
+gulp.task( 'all-task', function() {
+
+    return task_jsx2js()
+        .then( task_jsmin )
+        .then( task_index_mark )
+        .catch( function( err ) { console.log( err ); } )
         ;
 } );
-
-gulp.task( 'react', function() {
-
-    // 通过 browserify 管理依赖
-    return browserify( '../com/app.jsx' )
-        // babel 预处理文件
-        .transform( babelify, { presets: [ 'es2015', 'react', 'stage-2' ] } )
-        // 转换为 gulp 能识别的流
-        .bundle()
-        // 合并输出为 app.js
-        .pipe( source( '../dist/app.js' ) )
-        // 将未压缩版放在 dist 目录
-        .pipe( gulp.dest( './' ) )
-        // 新建压缩文件
-        .pipe( rename( '../dist/app.min.js' ) )
-        // 将 browserify 的流转为 gulp 的流，再压缩
-        .pipe( streamify( yuicompress( { type : 'js' } ) ) )
-        // 输出到 source 所操作的文件夹
-        .pipe( gulp.dest( './' ) )
-        ;
-} );
-
-// 让任务序列化执行
-gulp.task( 'defaultSequence', gulpSequence( 'react', 'index-mark' ) );
 
 // 启动观察者模式（对应的文件有改动就重新编译）
-gulp.watch( '../com/*.*', [ 'defaultSequence' ] ).on( 'change', function( evt ) {
+gulp.watch( '../com/*.*', [ 'all-task' ] ).on( 'change', function( evt ) {
 
     console.log( 'File ' + evt.path + ' was ' + evt.type + ', running tasks...' );
 } );
 
 // 任务执行的主入口
-gulp.task( 'default', [ 'defaultSequence' ] );
+gulp.task( 'default', [ 'all-task' ] );
 ```
 
 #### `project/subProject/bin/gulpfile.bat` 省去每次启动 gulp 命令的麻烦
@@ -200,7 +226,7 @@ module.exports = Speacker;
 
     <script src="//cdn.bootcss.com/react/15.3.2/react.min.js"></script>
     <script src="//cdn.bootcss.com/react/15.3.2/react-dom.min.js"></script>
-    <script src="dist/app.js?gulpv"></script>
+    <script src="dist/app.js?rev=@@hash"></script><!-- 路径要用相对路径，"?rev=@@hash" 也可是 "?rev=1" 等形式的值 -->
 </body>
 </html>
 ````
@@ -215,12 +241,8 @@ module.exports = Speacker;
 gulp.task( 'default', [ 'react', 'index-mark' ], callback );
 ```
 
-`react` 的 `task`、`index-mark` 的 `task` 和 `callback` 是同步执行的
+`react` 的 `task`、`index-mark` 的 `task` 和 `callback` 是同步执行的，要使用 `Promise` 方式去实现串联化执行
 
-```
-var gulpSequence = require( 'gulp-sequence' );
+实践中发现，使用 `gulp-sequence` 来实现串联化，搭配 `gulp.watch`，目标文件修改后，会报 `thunderFunction is filled` 错误
 
-gulp.task( 'default', gulpSequence( 'react', 'index-mark' ), callback );
-```
-
-`react` 的 `task` 执行，同时执行 `callback`，`react` 完成后执行 `index-mark`
+串联化 `task` 会在 `gulp 4.0` 版得到实现，但现在还在 alpha 中。。。
