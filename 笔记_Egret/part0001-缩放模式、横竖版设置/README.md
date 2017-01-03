@@ -100,138 +100,138 @@ this.addChild( txt );
 	</tr>
 	<tr>
 		<th>
-			`exactFit`
+			exactFit
 		</th>
 		<td>
-			![exactFit](game-view-w720-h1280/exactFit-heng-ping.png)
+			<img src="game-view-w720-h1280/exactFit-heng-ping.png" />
 		</td>
 		<td>
-			![exactFit](game-view-w720-h1280/exactFit-shu-ping.png)
+			<img src="game-view-w720-h1280/exactFit-shu-ping.png" />
 		</td>
 		<td>
-			![exactFit](game-view-w1280-h720/exactFit-heng-ping.png)
+			<img src="game-view-w1280-h720/exactFit-heng-ping.png" />
 		</td>
 		<td>
-			![exactFit](game-view-w1280-h720/exactFit-shu-ping.png)
+			<img src="game-view-w1280-h720/exactFit-shu-ping.png" />
 		</td>
 	</tr>
 	<tr>
 		<th>
-			`fixedHeight`
+			fixedHeight
 		</th>
 		<td>
-			![fixedHeight](game-view-w720-h1280/fixedHeight-heng-ping.png)
+			<img src="game-view-w720-h1280/fixedHeight-heng-ping.png" />
 		</td>
 		<td>
-			![fixedHeight](game-view-w720-h1280/fixedHeight-shu-ping.png)
+			<img src="game-view-w720-h1280/fixedHeight-shu-ping.png" />
 		</td>
 		<td>
-			![fixedHeight](game-view-w1280-h720/fixedHeight-heng-ping.png)
+			<img src="game-view-w1280-h720/fixedHeight-heng-ping.png" />
 		</td>
 		<td>
-			![fixedHeight](game-view-w1280-h720/fixedHeight-shu-ping.png)
+			<img src="game-view-w1280-h720/fixedHeight-shu-ping.png" />
 		</td>
 	</tr>
 	<tr>
 		<th>
-			`fixedNarrow`
+			fixedNarrow
 		</th>
 		<td>
-			![fixedNarrow](game-view-w720-h1280/fixedNarrow-heng-ping.png)
+			<img src="game-view-w720-h1280/fixedNarrow-heng-ping.png" />
 		</td>
 		<td>
-			![fixedNarrow](game-view-w720-h1280/fixedNarrow-shu-ping.png)
+			<img src="game-view-w720-h1280/fixedNarrow-shu-ping.png" />
 		</td>
 		<td>
-			![fixedNarrow](game-view-w1280-h720/fixedNarrow-heng-ping.png)
+			<img src="game-view-w1280-h720/fixedNarrow-heng-ping.png" />
 		</td>
 		<td>
-			![fixedNarrow](game-view-w1280-h720/fixedNarrow-shu-ping.png)
+			<img src="game-view-w1280-h720/fixedNarrow-shu-ping.png" />
 		</td>
 	</tr>
 	<tr>
 		<th>
-			`fixedWide`
+			fixedWide
 		</th>
 		<td>
-			![fixedWide](game-view-w720-h1280/fixedWide-heng-ping.png)
+			<img src="game-view-w720-h1280/fixedWide-heng-ping.png" />
 		</td>
 		<td>
-			![fixedWide](game-view-w720-h1280/fixedWide-shu-ping.png)
+			<img src="game-view-w720-h1280/fixedWide-shu-ping.png" />
 		</td>
 		<td>
-			![fixedWide](game-view-w1280-h720/fixedWide-heng-ping.png)
+			<img src="game-view-w1280-h720/fixedWide-heng-ping.png" />
 		</td>
 		<td>
-			![fixedWide](game-view-w1280-h720/fixedWide-shu-ping.png)
+			<img src="game-view-w1280-h720/fixedWide-shu-ping.png" />
 		</td>
 	</tr>
 	<tr>
 		<th>
-			`fixedWidth`
+			fixedWidth
 		</th>
 		<td>
-			![fixedWidth](game-view-w720-h1280/fixedWidth-heng-ping.png)
+			<img src="game-view-w720-h1280/fixedWidth-heng-ping.png" />
 		</td>
 		<td>
-			![fixedWidth](game-view-w720-h1280/fixedWidth-shu-ping.png)
+			<img src="game-view-w720-h1280/fixedWidth-shu-ping.png" />
 		</td>
 		<td>
-			![fixedWidth](game-view-w1280-h720/fixedWidth-heng-ping.png)
+			<img src="game-view-w1280-h720/fixedWidth-heng-ping.png" />
 		</td>
 		<td>
-			![fixedWidth](game-view-w1280-h720/fixedWidth-shu-ping.png)
+			<img src="game-view-w1280-h720/fixedWidth-shu-ping.png" />
 		</td>
 	</tr>
 	<tr>
 		<th>
-			`noBorder`
+			noBorder
 		</th>
 		<td>
-			![noBorder](game-view-w720-h1280/noBorder-heng-ping.png)
+			<img src="game-view-w720-h1280/noBorder-heng-ping.png" />
 		</td>
 		<td>
-			![noBorder](game-view-w720-h1280/noBorder-shu-ping.png)
+			<img src="game-view-w720-h1280/noBorder-shu-ping.png" />
 		</td>
 		<td>
-			![noBorder](game-view-w1280-h720/noBorder-heng-ping.png)
+			<img src="game-view-w1280-h720/noBorder-heng-ping.png" />
 		</td>
 		<td>
-			![noBorder](game-view-w1280-h720/noBorder-shu-ping.png)
+			<img src="game-view-w1280-h720/noBorder-shu-ping.png" />
 		</td>
 	</tr>
 	<tr>
 		<th>
-			`noScale`
+			noScale
 		</th>
 		<td>
-			![noScale](game-view-w720-h1280/noScale-heng-ping.png)
+			<img src="game-view-w720-h1280/noScale-heng-ping.png" />
 		</td>
 		<td>
-			![noScale](game-view-w720-h1280/noScale-shu-ping.png)
+			<img src="game-view-w720-h1280/noScale-shu-ping.png" />
 		</td>
 		<td>
-			![noScale](game-view-w1280-h720/noScale-heng-ping.png)
+			<img src="game-view-w1280-h720/noScale-heng-ping.png" />
 		</td>
 		<td>
-			![noScale](game-view-w1280-h720/noScale-shu-ping.png)
+			<img src="game-view-w1280-h720/noScale-shu-ping.png" />
 		</td>
 	</tr>
 	<tr>
 		<th>
-			`showAll`
+			showAll
 		</th>
 		<td>
-			![showAll](game-view-w720-h1280/showAll-heng-ping.png)
+			<img src="game-view-w720-h1280/showAll-heng-ping.png" />
 		</td>
 		<td>
-			![showAll](game-view-w720-h1280/showAll-shu-ping.png)
+			<img src="game-view-w720-h1280/showAll-shu-ping.png" />
 		</td>
 		<td>
-			![showAll](game-view-w1280-h720/showAll-heng-ping.png)
+			<img src="game-view-w1280-h720/showAll-heng-ping.png" />
 		</td>
 		<td>
-			![showAll](game-view-w1280-h720/showAll-shu-ping.png)
+			<img src="game-view-w1280-h720/showAll-shu-ping.png" />
 		</td>
 	</tr>
 </table>
