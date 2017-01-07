@@ -74,11 +74,11 @@ vi /etc/vsftpd/vsftpd.conf
 
 修改如下：
 
-* `userlist_enable=YES` 改为 `userlist_enable=NO`
-
 * `#write_enable=YES` 改为 `write_enable=YES`，`#anon_upload_enable=YES` 改为 `anon_upload_enable=YES`，这样才能上传文件
 
 * `#anon_mkdir_write_enable=YES` 改为 `anon_mkdir_write_enable=YES`，这样才能上传文件夹
+
+* `userlist_enable=YES` 改为 `userlist_enable=NO`
 
 * 添加 `anon_umask=022`，这样上传的文件才能被下载
 
