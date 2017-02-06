@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>RxJS例子</title>
+    <meta name="viewport" content="width=device-width,user-scalable=no">
+</head>
+<body>
+    <script src="libs/rxjs/5.0.3/Rx.min.js"></script>
+    <script>
+        // 打印内容为
+        // observerA: 0
+        // observerA: 1
+        // observerB: 1
+        // observerB: 2
+        // observerB: 3
+
+        var source = Rx.Observable.interval( 500 );
+        var subject = new Rx.Subject();
+        var multicasted = source.multicast( subject );
+        var subscription1, subscription2, subscriptionConnect;
+
+        subscription1 = multicasted.subscribe( {
+            next: ( v ) => console.log( 'observerA: ' + v )
+        } );
+        // We should call `connect()` here, because the first
+        // subscriber to `multicasted` is interested in consuming values
+        subscriptionConnect = multicasted.connect();
+
+        setTimeout( () => {
+            // 类似于插入子订阅操作，不同的是，插入后，ta 还可以独立操作，而相同的是，总订阅退订，所有的订阅会停止执行
+            subscription2 = multicasted.subscribe( {
+                next: ( v ) => console.log( 'observerB: ' + v )
+            } );
+        }, 600 );
+
+        setTimeout( () => {
+            subscription1.unsubscribe();
+        }, 1200 );
+
+        // We should unsubscribe the shared Observable execution here,
+        // because `multicasted` would have no more subscribers after this
+        setTimeout( () => {
+            subscription2.unsubscribe();
+            subscriptionConnect.unsubscribe(); // for the shared Observable execution
+        }, 2000 );
+    </script>
+</body>
+</html>

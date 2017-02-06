@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>自习</title>
+    <meta name="viewport" content="width=device-width,user-scalable=no">
+    <link rel="stylesheet" href="libs/bootstrap/3.3.7/css/bootstrap.min.css">
+    <style>
+        .list-group {margin-top: 20px;user-select: none;}
+        .done {text-decoration: line-through;}
+        .button-remove {position: absolute;right: 5px;bottom: 3px;}
+    </style>
+</head>
+<body>
+    <div id="app">
+        <div class="title"><h2>Output</h2></div>
+        <div class="input-group">
+            <input type="text" class="form-control todo-val" placeholder="todo" />
+            <div class="input-group-btn">
+                <div class="btn btn-default button-add">Add</div>
+            </div>
+        </div>
+        <ul class="list-group"></ul>
+    </div>
+
+    <script src="libs/rxjs/5.0.3/Rx.min.js"></script>
+    <script>
+        // 生成新 li
+        const createTodoItem = ( val ) => {
+            const nodeLi = document.createElement( 'li' );
+            nodeLi.classList.add( 'list-group-item' );
+            const innerHTML = `
+                ${val}
+                <button type="button" class="btn btn-default button-remove" aria-label="right Align">
+                    <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                </button>
+            `;
+            nodeLi.innerHTML = innerHTML;
+            return nodeLi;
+        };
+    </script>
+    <script>
+        const $input    = document.querySelector( '.todo-val' );
+        const $addBtn   = document.querySelector( '.button-add' );
+        const $list     = document.querySelector( '.list-group' );
+
+        const enter$    = Rx.Observable.fromEvent( $input, 'keydown' )
+                            .filter( evt => evt.keyCode === 13 )
+                            ;
+        const clk$      = Rx.Observable.fromEvent( $addBtn, 'click' );
+        const input$    = enter$.merge( clk$ );
+        const item$     = input$
+                            .map( () => $input.value )
+                            .filter( val => val !== '' )
+                            .map( createTodoItem )
+                            .do( todoItem => {
+                                $list.appendChild( todoItem );
+                                $input.value = '';
+                            } )
+                            .publishReplay( 1 )
+                            .refCount()
+                            ;
+
+        const toggle$   = item$
+                            // .mergeMap( todoItem => {
+                            //     return Rx.Observable.fromEvent( todoItem, 'click' )
+                            //         .filter( evt => evt.target === todoItem )
+                            //         .mapTo( todoItem )
+                            //         ;
+                            // } )
+                            .map( todoItem => {
+                                return Rx.Observable.fromEvent( todoItem, 'click' )
+                                        .filter( evt => evt.target === todoItem )
+                                        .mapTo( todoItem )
+                                        ;
+                            } )
+                            .merge()
+                            .do( todoItem => {
+                                todoItem.classList.contains( 'done' ) ? todoItem.classList.remove( 'done' ) : todoItem.classList.add( 'done' );
+                            } )
+                            ;
+
+        const remove$   = item$
+                            .mergeMap( todoItem => {
+                                return Rx.Observable.fromEvent( todoItem.querySelector( '.button-remove' ), 'click' )
+                                    .mapTo( todoItem )
+                                    ;
+                            } )
+                            .do( todoItem => {
+                                todoItem.parentNode.removeChild( todoItem );
+                            } )
+                            ;
+        
+        const app$      = toggle$
+                            .merge( remove$ )
+                            .do( v => console.log( v ) )
+                            ;
+    
+        app$.subscribe();
+    </script>
+</body>
+</html>

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>RxJS例子</title>
+    <meta name="viewport" content="width=device-width,user-scalable=no">
+</head>
+<body>
+    <script src="libs/rxjs/5.0.3/Rx.min.js"></script>
+    <script>
+        // 打印内容为
+        // 10
+        // 20
+        // 30
+        // 40
+
+        function multiplyByTen( input ) {
+            var output = Rx.Observable.create( function subscribe( observer ) {
+                input.subscribe( {
+                    next: ( v ) => observer.next( 10 * v ),
+                    error: ( err ) => observer.error( err ),
+                    complete: () => observer.complete()
+                } );
+            } );
+            return output;
+        }
+
+        var input = Rx.Observable.from( [ 1, 2, 3, 4 ] );
+        var output = multiplyByTen( input );
+        output.subscribe( x => console.log( x ) );
+    </script>
+</body>
+</html>

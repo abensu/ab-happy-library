@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>RxJS例子</title>
+    <meta name="viewport" content="width=device-width,user-scalable=no">
+</head>
+<body>
+    <script src="libs/rxjs/5.0.3/Rx.min.js"></script>
+    <script>
+        // 打印内容为
+        // just before subscribe
+        // just after subscribe
+        // got value 1
+        // got value 2
+        // got value 3
+        // done
+
+        var observable = Rx.Observable.create( function ( proxyObserver ) {
+            proxyObserver.next( 1 );
+            proxyObserver.next( 2 );
+            proxyObserver.next( 3 );
+            proxyObserver.complete();
+        } )
+        .observeOn( Rx.Scheduler.async );
+
+        var finalObserver = {
+            next: x => console.log( 'got value ' + x ),
+            error: err => console.error( 'something wrong occurred: ' + err ),
+            complete: () => console.log( 'done' ),
+        };
+
+        console.log( 'just before subscribe' );
+        observable.subscribe( finalObserver );
+        console.log( 'just after subscribe' );
+    </script>
+</body>
+</html>

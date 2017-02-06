@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>RxJS例子</title>
+    <meta name="viewport" content="width=device-width,user-scalable=no">
+</head>
+<body>
+    <script src="libs/rxjs/5.0.3/Rx.min.js"></script>
+    <script>
+
+        // 下面程序所输出的内容
+        // "Hello"
+        // 21
+        // "Hello"
+        // 21
+
+        // 两个独立的流
+
+        var foo = Rx.Observable.create( function ( observer ) {
+            var i = 20;
+            console.log( 'Hello' );
+            observer.next( ++i );
+        } );
+
+        foo.subscribe( function ( x ) {
+            console.log( x );
+        } );
+
+        foo.subscribe( function ( y ) {
+            console.log( y );
+        } );
+
+        // foo.call(); // 这样写会报错，虽然官方例子有这样的写法
+    </script>
+</body>
+</html>

@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>RxJS例子</title>
+    <meta name="viewport" content="width=device-width,user-scalable=no">
+</head>
+<body>
+    <button>点我</button>
+
+    <script src="libs/rxjs/5.0.3/Rx.min.js"></script>
+    <script>
+        // 每点击一次，就打印一次点击总数
+        var button = document.querySelector( 'button' );
+        Rx.Observable.fromEvent( button, 'click' )
+            .scan( count => count + 1, 0 )
+            .subscribe( count => { console.log( `Clicked ${count} times` ) } );
+    </script>
+</body>
+</html>

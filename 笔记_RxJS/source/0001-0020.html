@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>RxJS例子</title>
+    <meta name="viewport" content="width=device-width,user-scalable=no">
+</head>
+<body>
+    <script src="libs/rxjs/5.0.3/Rx.min.js"></script>
+    <script>
+        // 打印内容为
+        // <无输出>
+
+        // 以下属于 static operator
+
+        // var observable = Rx.Observable.interval( 1000 /* number of milliseconds */ );
+
+        var observable1 = Rx.Observable.interval( 1000 );
+        var observable2 = Rx.Observable.interval( 400 );
+
+        var merged = Rx.Observable.merge( observable1, observable2 );
+    </script>
+</body>
+</html>

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>api</title>
+    <meta name="viewport" content="width=device-width,user-scalable=no">
+    <link rel="stylesheet" href="libs/bootstrap/3.3.7/css/bootstrap.min.css">
+    <style>
+        .list-group {margin-top: 20px;user-select: none;}
+        .done {text-decoration: line-through;}
+        .button-remove {position: absolute;right: 5px;bottom: 3px;}
+    </style>
+</head>
+<body>
+    <button id="map1">map1</button>
+    <button id="map2">map2</button>
+    <hr />
+    <button id="merge1">merge1</button>
+    <button id="merge2">merge2</button>
+    <hr />
+    <button id="mergeMap1">mergeMap1</button>
+    <button id="mergeMap2">mergeMap2</button>
+
+    <script src="libs/rxjs/5.0.3/Rx.min.js"></script>
+    <script>
+        // map 示例
+        //
+        // 因为 map 只改变流输出的主体，所以 do 中的 v 参数是 $map1 的 MouseEvent
+        //
+        // 点击 $map1 会输出 "map demo"
+        // 点击 $map2 不会输出
+
+        const $map1 = document.querySelector( '#map1' );
+        const $map2 = document.querySelector( '#map2' );
+
+        Rx.Observable.fromEvent( $map1, 'click' )
+            .map( () => Rx.Observable.fromEvent( $map2, 'click' ) )
+            .do( v => console.log( 'map demo' ) )
+            .subscribe()
+            ;
+    </script>
+    <script>
+        // merge 示例
+        //
+        // merge 将两个流以并联的方式组合
+        //
+        // 点击 $merge1，do 中的 v 参数是 $merge1 的 MouseEvent，并输出 "merge demo"
+        // 点击 $merge2，do 中的 v 参数是 $merge2 的 MouseEvent，并输出 "merge demo"
+
+        const $merge1 = document.querySelector( '#merge1' );
+        const $merge2 = document.querySelector( '#merge2' );
+
+        Rx.Observable.fromEvent( $merge1, 'click' )
+            .merge( Rx.Observable.fromEvent( $merge2, 'click' ) )
+            .do( v => console.log( 'merge demo' ) )
+            .subscribe()
+            ;
+    </script>
+    <script>
+        // mergeMap 示例
+        //
+        // mergeMap 将两个流以串联的方式组合，并且接受上一个流产生的主体
+        //
+        // 点击 $merge1，不会输出，但会缓存，影响点击 $merge2 的输出次数
+        // 点击 $merge2，do 中的 v 参数是 $merge2 的 MouseEvent，并输出 0~n 个 "merge demo"，个数由点击 $merge1 的次数决定
+
+        const $mergeMap1 = document.querySelector( '#mergeMap1' );
+        const $mergeMap2 = document.querySelector( '#mergeMap2' );
+
+        Rx.Observable.fromEvent( $mergeMap1, 'click' )
+            .mergeMap( evt => {
+                return Rx.Observable.fromEvent( $mergeMap2, 'click' );
+             } )
+            .do( v => console.log( 'mergeMap demo' ) )
+            .subscribe()
+            ;
+    </script>
+</body>
+</html>

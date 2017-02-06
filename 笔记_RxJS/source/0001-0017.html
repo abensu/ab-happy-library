@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>RxJS例子</title>
+    <meta name="viewport" content="width=device-width,user-scalable=no">
+</head>
+<body>
+    <script src="libs/rxjs/5.0.3/Rx.min.js"></script>
+    <script>
+        // 打印内容为
+        // observerA: 5
+        // observerB: 5
+
+        // 只打印最有一次
+
+        var subject = new Rx.AsyncSubject();
+
+        subject.subscribe( {
+            next: ( v ) => console.log( 'observerA: ' + v )
+        } );
+
+        subject.next( 1 );
+        subject.next( 2 );
+        subject.next( 3 );
+        subject.next( 4 );
+
+        subject.subscribe( {
+            next: ( v ) => console.log( 'observerB: ' + v )
+        } );
+
+        subject.next( 5 );
+        subject.complete();
+    </script>
+</body>
+</html>

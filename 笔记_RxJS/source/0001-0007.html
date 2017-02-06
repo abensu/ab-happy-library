@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>RxJS例子</title>
+    <meta name="viewport" content="width=device-width,user-scalable=no">
+</head>
+<body>
+    <script src="libs/rxjs/5.0.3/Rx.min.js"></script>
+    <script>
+        ( () => {
+
+            // 这样还是会打印 10、20、30，因为是同步方式促发的
+            var observable = Rx.Observable.from( [ 10, 20, 30 ] );
+            var subscription = observable.subscribe( x => console.log( x ) );
+
+            // Later:
+            subscription.unsubscribe();
+        } )();
+
+        ( () => {
+
+            // 这样才能停止打印 'haha'
+            var observable = Rx.Observable.create( ( observable ) => { 
+                setInterval( () => {
+                    observable.next( 'haha' );
+                }, 1000 );
+            } );
+            var subscription = observable.subscribe( x => console.log( x ) );
+
+            // Later:
+            subscription.unsubscribe();
+        } )();
+    </script>
+</body>
+</html>

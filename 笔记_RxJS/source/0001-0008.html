@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>RxJS例子</title>
+    <meta name="viewport" content="width=device-width,user-scalable=no">
+</head>
+<body>
+    <script src="libs/rxjs/5.0.3/Rx.min.js"></script>
+    <script>
+        // 打印内容为
+        // second: 0
+        // first: 0
+        // second: 1
+        // first: 1
+        // second: 2
+
+        var observable1 = Rx.Observable.interval( 400 );
+        var observable2 = Rx.Observable.interval( 300 );
+
+        var subscription = observable1.subscribe( x => console.log( 'first: ' + x ) );
+        var childSubscription = observable2.subscribe( x => console.log( 'second: ' + x ) );
+
+        subscription.add( childSubscription ); // 添加子订阅者
+        // subscription.remove( childSubscription ); // 删除子订阅者
+
+        setTimeout( () => {
+            // subscription.remove( childSubscription ); // 就算执行删除子订阅者，childSubscription 也不会执行 interval 操作了
+
+            // Unsubscribes BOTH subscription and childSubscription
+            subscription.unsubscribe();
+        }, 1000 );
+    </script>
+</body>
+</html>

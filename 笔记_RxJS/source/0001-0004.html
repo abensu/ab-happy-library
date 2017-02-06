@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>RxJS例子</title>
+    <meta name="viewport" content="width=device-width,user-scalable=no">
+</head>
+<body>
+    <script src="libs/rxjs/5.0.3/Rx.min.js"></script>
+    <script>
+
+        // 下面程序所输出的内容
+        // just before subscribe
+        // got value 1
+        // got value 2
+        // got value 3
+        // just after subscribe
+        // got value 4
+        // done
+
+        // Rx 的 Observable 的结构，主要有 next、error、complete
+
+        var observable = Rx.Observable.create( ( observable ) => {
+            observable.next( 1 );
+            observable.next( 2 );
+            observable.next( 3 );
+            setTimeout( () => {
+                // observable.error( 'omg' ); // 如果执行该处，下面不会执行
+                // observable.complete(); // 如果执行该处，下面不会执行
+                observable.next( 4 );
+                observable.complete();
+            }, 1000 );
+        } );
+
+        console.log( 'just before subscribe' );
+
+        observable.subscribe( {
+            next : x => console.log( `got value ${x}` )
+            , error : err => console.error( `something wrong occurred: ${err}` )
+            , complete : () => console.log( 'done' )
+        } );
+        // 等价于
+        // observable.subscribe(
+        //     x => console.log( `got value ${x}` )
+        //     , err => console.error( `something wrong occurred: ${err}` )
+        //     , () => console.log( 'done' )
+        // );
+
+        console.log( 'just after subscribe' );
+    </script>
+</body>
+</html>

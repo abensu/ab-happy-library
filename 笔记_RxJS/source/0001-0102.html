@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>https://zhuanlan.zhihu.com/p/23464709</title>
+    <meta name="viewport" content="width=device-width,user-scalable=no">
+    <link rel="stylesheet" href="libs/bootstrap/3.3.7/css/bootstrap.min.css">
+    <style>
+        .list-group {margin-top: 20px;user-select: none;}
+        .done {text-decoration: line-through;}
+        .button-remove {position: absolute;right: 5px;bottom: 3px;}
+    </style>
+</head>
+<body>
+    <div id="app">
+        <div class="title"><h2>Output</h2></div>
+        <div class="input-group">
+            <input type="text" class="form-control todo-val" placeholder="todo" />
+            <div class="input-group-btn">
+                <div class="btn btn-default button-add">Add</div>
+            </div>
+        </div>
+        <ul class="list-group"></ul>
+    </div>
+
+    <script src="libs/rxjs/5.0.3/Rx.min.js"></script>
+    <script>
+        // 模拟 http 请求
+        const mockHttpPost = value => {
+            return Rx.Observable.create( observer => {
+                let status = 'pending';
+                let dbIndex = 0;
+                const timmer = setTimeout( () => {
+                    const result = {
+                        _id : ++dbIndex, value,
+                        isDone : false
+                    };
+                    // searchStorage.set( result._id, result );
+                    status = 'done';
+                    observer.next( result );
+                    observer.complete();
+                }, Math.random( 10, 1000 ) );
+                return () => {
+                    clearTimeout( timmer );
+                    if ( status === 'pending' ) {
+                        console.warn( 'post canceled' );
+                    }
+                };
+            } );
+        };
+    </script>
+    <script>
+        // 生成新 li
+        const createTodoItem = ( data ) => {
+            const nodeLi = document.createElement( 'li' );
+            nodeLi.classList.add( 'list-group-item', `todo-item-${data._id}` );
+            nodeLi.setAttribute( 'data-id', `${data._id}` );
+            const innerHTML = `
+                ${data.value}
+                <button type="button" class="btn btn-default button-remove" aria-label="right Align">
+                    <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                </button>
+            `;
+            nodeLi.innerHTML = innerHTML;
+            return nodeLi;
+        };
+    </script>
+    <script>
+        /** 
+         * 主程序
+         */
+
+        const $input    = document.querySelector( '.todo-val' );
+        const $list     = document.querySelector( '.list-group' );
+        const $add      = document.querySelector( '.button-add' );
+
+        const enter$ = Rx.Observable.fromEvent( $input, 'keydown' )
+            .filter( evt => evt.keyCode === 13 )
+            ;
+        
+        const clickAdd$ = Rx.Observable.fromEvent( $add, 'click' );
+
+        const input$ = enter$.merge( clickAdd$ );
+
+        const item$ = input$
+            .map( () => $input.value )
+            .filter( r => r !== '' )
+            .switchMap( mockHttpPost )
+            .map( createTodoItem )
+            .do( ele => {
+                $list.appendChild( ele );
+                $input.value = '';
+            } )
+            .publishReplay( 1 )
+            .refCount()
+            ;
+        
+        const toggle$ = item$
+            // map and merge
+            // 以下变成了每个 item 的订阅事件
+            .mergeMap( $todoItem => {
+                return Rx.Observable.fromEvent( $todoItem, 'click' )
+                    .filter( evt => evt.target === $todoItem )
+                    .mapTo( $todoItem ) // 使下面的函数参数为 $todoItem 而不是 MouseEvent
+                    ;
+            } )
+            .do( $todoItem => {
+                if ( $todoItem.classList.contains( 'done' ) ) {
+                    $todoItem.classList.remove( 'done' );
+                } else {
+                    $todoItem.classList.add( 'done' );
+                }
+            } )
+            ;
+        
+        const remove$ = item$
+            .mergeMap( $todoItem => {
+                const $removeButton = $todoItem.querySelector( '.button-remove' );
+                return Rx.Observable.fromEvent( $removeButton, 'click' )
+                    .mapTo( $todoItem )
+                    ;
+            } )
+            .do( $todoItem => {
+                const $parent = $todoItem.parentNode;
+                $parent.removeChild( $todoItem );
+            } )
+            ;
+
+        const app$ = toggle$
+            .merge( remove$ )
+            .do( r => console.log( r ) )
+            ;
+
+        app$.subscribe();
+    </script>
+</body>
+</html>

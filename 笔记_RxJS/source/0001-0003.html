@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>RxJS例子</title>
+    <meta name="viewport" content="width=device-width,user-scalable=no">
+</head>
+<body>
+    <button>点我</button>
+
+    <script src="libs/rxjs/5.0.3/Rx.min.js"></script>
+    <script>
+        // 1 秒内只能点一次，总数 = 上一次总数 + 所点击的横向位置，并打印出总数
+        var button = document.querySelector( 'button' );
+        Rx.Observable.fromEvent( button, 'click' )
+            .throttleTime( 1000 )
+            .map( event => event.clientX )
+            .scan( ( count, clientX ) => count + clientX, 0 )
+            .subscribe( count => { console.log( count ) } );
+    </script>
+</body>
+</html>

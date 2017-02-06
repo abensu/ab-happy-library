@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>RxJS例子</title>
+    <meta name="viewport" content="width=device-width,user-scalable=no">
+</head>
+<body>
+    <script src="libs/rxjs/5.0.3/Rx.min.js"></script>
+    <script>
+
+        // subscribe 之后，会每秒打印 "hi"
+
+        var observable = Rx.Observable.create( function subscribe( observer ) {
+            var id = setInterval( () => {
+                observer.next( 'hi' );
+            }, 1000 );
+        } );
+
+        observable.subscribe( function ( y ) {
+            console.log( y );
+        } );
+    </script>
+</body>
+</html>
