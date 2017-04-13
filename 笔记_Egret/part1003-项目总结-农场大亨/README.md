@@ -50,7 +50,7 @@
 
 1. `cacheAsBitmap` 区域在 `eui.Scroller` 中不会因回弹动画而影响
 
-## 单 `egret.Shape` 绘制多色多图形的不良反应
+## ❤ 单 `egret.Shape` 绘制多色多图形的不良反应
 
 主要是会影响单个 `egret.Shape` 使用不同颜色绘制多个图形
 
@@ -76,17 +76,17 @@ shape.graphics.endFill();
 
 骚年，改用图片（`egret.Bitmap` 或 `eui.Image`）吧！
 
-## `eui.Image` 不能获取宽高，而 `egret.Bitmap` 可以获取宽高
+## ❤ `eui.Image` 不能获取宽高，而 `egret.Bitmap` 可以获取宽高
 
-## `eui.Scroller` 的滚动起效，必须有 `eui` 的元素（如 `eui.Image`、`eui.Label`），而不能全是 `egret` 的元素（如 `egret.Bitmap`、`egret.TextField` 等）
+## ❤ `eui.Scroller` 的滚动起效，必须有 `eui` 的元素（如 `eui.Image`、`eui.Label`），而不能全是 `egret` 的元素（如 `egret.Bitmap`、`egret.TextField` 等）
 
-## 调试输出使用 `egret.log` 而不是 `console.log`
+## ❤ 调试输出使用 `egret.log` 而不是 `console.log`
 
 `egret.log` 具有 `console.log` 的效果，还能在 `data-show-log="true"` 时，在屏幕打印消息
 
-## `if ( DEBUG ) { ... }` 的内容不会存在在发版文件中
+## ❤ `if ( DEBUG ) { ... }` 的内容不会存在在发版文件中
 
-## `eui.sys.Animate` 的事例
+## ❤ `eui.sys.Animate` 的事例
 
 针对单属性可使用 `eui.sys.Animate`，`eui.Scroller` 的回弹动画就是用这滴
 
