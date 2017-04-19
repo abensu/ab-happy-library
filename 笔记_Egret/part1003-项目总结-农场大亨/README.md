@@ -101,3 +101,60 @@ d_ani.duration = 2000;
 d_ani.endFunction = fn_final;
 d_ani.play();
 ```
+
+## ❤ 图片资源必须同源（x.a.com 只能用 x.a.com 的资源），非同源可使用 nginx 的反向代理进行同源化
+
+使用非同源的图片会报以下错误：
+
+![非同源图片引发的错误](source/0008.png)
+
+可使用 nginx 的反向代理功能进行同源化（代码类似下面，主要是 proxy 的相关设置）：
+
+```
+http {
+    include       mime.types;
+    default_type  application/octet-stream;
+
+    #log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
+    #                  '$status $body_bytes_sent "$http_referer" '
+    #                  '"$http_user_agent" "$http_x_forwarded_for"';
+
+    #access_log  logs/access.log  main;
+
+    sendfile        on;
+    #tcp_nopush     on;
+
+    #keepalive_timeout  0;
+    keepalive_timeout  65;
+
+    server {
+        listen 80;
+        server_name  www.a.com;
+    
+        access_log  logs/a.access.log  main;
+        error_log  logs/a.error.log;
+        root   html;
+        index  index.html index.htm index.php;
+    
+        ## send request back to apache ##
+        location /images {
+            proxy_pass  http://www.b.com/images;
+    
+            #Proxy Settings
+            proxy_redirect     off;
+            proxy_set_header   Host             $host;
+            proxy_set_header   X-Real-IP        $remote_addr;
+            proxy_set_header   X-Forwarded-For  $proxy_add_x_forwarded_for;
+            proxy_next_upstream error timeout invalid_header http_500 http_502 http_503 http_504;
+            proxy_max_temp_file_size 0;
+            proxy_connect_timeout      90;
+            proxy_send_timeout         90;
+            proxy_read_timeout         90;
+            proxy_buffer_size          4k;
+            proxy_buffers              4 32k;
+            proxy_busy_buffers_size    64k;
+            proxy_temp_file_write_size 64k;
+        }
+    }
+}
+```
