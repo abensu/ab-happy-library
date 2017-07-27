@@ -6,7 +6,11 @@
 
 ## 过程
 
-略
+但这真机测试发现（仅在 iphone 6s 的 ios 10），Safari 和微信因安全原因，不允许调用复制功能。。。MGJJ
+
+仅能在 PC 浏览器正常调用（ie8 及以下版本不支持），汗颜。。。
+
+![浏览器支持情况](http://upload-images.jianshu.io/upload_images/1275262-5a589a115f415933.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 ## 解决
 
@@ -23,7 +27,19 @@ function func_copy( text, callback ) {
         d_is_support    = typeof document.execCommand === 'function', // 检测是否支持 execCommand
         d_cb            = typeof callback === 'function' ? callback : function( err_msg ) {};
     
-    if ( !d_is_support ) return d_cb( 'not support execCommand' ); // 如果不支持 execCommand，则立刻调用
+    // 【中断】如果不支持 execCommand，则立刻调用
+    if ( !d_is_support ) {
+
+        return d_cb( 'not support execCommand' );
+    }
+
+    // 【中断】safari、微信等出于安全原因，屏蔽复制功能
+    if ( !document.execCommand( 'copy' ) ) {
+
+        prompt( '复制失败。请手动全选以下内容，并复制', text );
+
+        return d_cb( 'does not support copy, you should manual copy' );
+    }
 
     var n_new_input = document.createElement( 'input' );
     
@@ -57,3 +73,5 @@ function func_copy( text, callback ) {
 1. [前端复制功能的若干 -- document.execCommand()](http://www.cnblogs.com/xhyu/p/5370111.html)
 
 1. [clipBoardEvent, execCommand等粘贴板相关研究](http://blog.csdn.net/twoByte/article/details/52250205)
+
+1. [怎么在微信浏览器中用js触发copy事件？](https://segmentfault.com/q/1010000006072576)

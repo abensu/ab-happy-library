@@ -2,13 +2,13 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>复制文本功能</title>
 </head>
 <body>
     <input type="text" class="copy-src" placeholder="输入你要复制的文本" />
-    <span class="copy-tip"></span>
+    <span class="copy-tip" style="color:brown"></span>
     <br>
     <a href="javascript:;" class="copy-btn">复制</a>
     <a href="javascript:;" class="random-btn" onclick="document.querySelector('.copy-src').value=Math.random()">生成随机文本</a>
@@ -31,7 +31,19 @@
                 d_is_support    = typeof document.execCommand === 'function', // 检测是否支持 execCommand
                 d_cb            = typeof callback === 'function' ? callback : function( err_msg ) {};
             
-            if ( !d_is_support ) return d_cb( 'not support execCommand' ); // 如果不支持 execCommand，则立刻调用
+            // 【中断】如果不支持 execCommand，则立刻调用
+            if ( !d_is_support ) {
+
+                return d_cb( 'not support execCommand' );
+            }
+
+            // 【中断】safari、微信等出于安全原因，屏蔽复制功能
+            if ( !document.execCommand( 'copy' ) ) {
+
+                prompt( '复制失败。请手动全选以下内容，并复制', text );
+
+                return d_cb( 'does not support copy, you should manual copy' );
+            }
 
             var n_new_input = document.createElement( 'input' );
             
@@ -68,7 +80,7 @@
 
                     document.querySelector( '.copy-tip' ).textContent = '';
 
-                }, 500 );
+                }, 1000 );
             } );
 
         }, false );
