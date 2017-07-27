@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>复制文本功能</title>
+</head>
+<body>
+    <input type="text" class="copy-src" placeholder="输入你要复制的文本" />
+    <span class="copy-tip"></span>
+    <br>
+    <a href="javascript:;" class="copy-btn">复制</a>
+    <a href="javascript:;" class="random-btn" onclick="document.querySelector('.copy-src').value=Math.random()">生成随机文本</a>
+    <br>
+    <br>
+    <input type="text" class="paste-field" placeholder="试试黏贴">
+    <br>
+    <a href="javascript:;" class="paste-remove" onclick="document.querySelector('.paste-field').value='';">清除文本框数据</a>
+
+    <script>
+        /**
+         * 封装好的复制方法
+         *
+         * @param {string}                          text        需要复制的文字
+         * @param {( err_msg?: string ) => void}    callback    回调，如果复制失败，err_msg 为 undefined
+         */
+        function func_copy( text, callback ) {
+
+            var
+                d_is_support    = typeof document.execCommand === 'function', // 检测是否支持 execCommand
+                d_cb            = typeof callback === 'function' ? callback : function( err_msg ) {};
+            
+            if ( !d_is_support ) return d_cb( 'not support execCommand' ); // 如果不支持 execCommand，则立刻调用
+
+            var n_new_input = document.createElement( 'input' );
+            
+            document.body.appendChild( n_new_input );
+
+            n_new_input.type = 'text';
+            n_new_input.value = '' + text;
+
+            // n_new_input.style.display = 'none'; // bugtip : 设置这个，复制内容会无效
+            n_new_input.style.position = 'absolute';
+            n_new_input.style.zIndex = '-9999';
+
+            n_new_input.focus(); // 聚焦文本框
+            n_new_input.select(); // 全选文本框中的文字
+
+            // 复制选中文字，第一个参数是方法名，第二个是是否展示默认 UI，第三个是可选参数列表，对 Copy 来说后两个都用不到
+            var d_is_success = document.execCommand( 'Copy', false, null );
+
+            n_new_input.parentNode.removeChild( n_new_input );
+
+            d_cb( d_is_success ? undefined : 'copy fail' );
+        };
+
+        // 绑定点击事件，进行复制
+        document.querySelector( '.copy-btn' ).addEventListener( 'click', function() {
+
+            func_copy( document.querySelector( '.copy-src' ).value, function( err_msg ) {
+
+                // 设置提示信息
+                document.querySelector( '.copy-tip' ).textContent = err_msg || 'copy success';
+
+                // 清除提示信息
+                setTimeout( function() {
+
+                    document.querySelector( '.copy-tip' ).textContent = '';
+
+                }, 500 );
+            } );
+
+        }, false );
+    </script>
+</body>
+</html>
