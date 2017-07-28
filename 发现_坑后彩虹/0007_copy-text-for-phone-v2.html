@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>复制文本功能</title>
+</head>
+<body>
+    <span class="tip"></span>
+    <br>
+    <br>
+    <a href="javascript:;" id="random-copy">促发区域</a>
+    <br>
+    <br>
+    <input type="text" placeholder="试试黏贴" id="paste-field">
+
+    <!-- 必须引入下面两个资源 -->
+    <script src="dist/clipboard.min.js"></script>
+    <script src="dist/MyClipboard.min.js"></script>
+
+    <script>
+        // 复制初始化（必选）
+        MyClipboard.init();
+
+        // 复制成功的回调（可选）
+        MyClipboard.success = function( e ) {
+            document.querySelector( '.tip' ).textContent = '复制 "' + e.text + '" 成功';
+        };
+
+        // 复制失败的回调（可选）
+        MyClipboard.error = function( e ) {
+            document.querySelector( '.tip' ).textContent = '复制失败';
+        };
+
+        // 测试用例
+        document.getElementById( 'random-copy' ).addEventListener( 'click', function() {
+
+            var d_random = Math.random(); // 产生随机值
+
+            document.getElementById( 'paste-field' ).value = ''; // 清空黏贴区域
+
+            // 复制文本（必选）
+            MyClipboard.copy( d_random );
+
+        }, false );
+    </script>
+</body>
+</html>

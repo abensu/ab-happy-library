@@ -6,13 +6,23 @@
 
 ## 过程
 
-但这真机测试发现（仅在 iphone 6s 的 ios 10），Safari 和微信因安全原因，不允许调用复制功能。。。MGJJ
+[第一版](0007_copy-text-for-phone.html)开发后，经真机测试发现（仅在 iphone 6s 的 ios 10），Safari 和微信因安全原因，不允许调用复制功能。。。MGJJ
 
 仅能在 PC 浏览器正常调用（ie8 及以下版本不支持），汗颜。。。
 
 ![浏览器支持情况](http://upload-images.jianshu.io/upload_images/1275262-5a589a115f415933.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
+然后某同事说 [cilpboard.js](https://clipboardjs.com/) 声称能兼容，然后在手机上测试了一下 demo，果真可以复制了，Duang！（但 [zeroClipboard.js](http://zeroclipboard.org/) 却不行 /(ㄒoㄒ)/~~）
+
+同时 [cilpboard.js](https://clipboardjs.com/) 支持 umd 模式，强烈赞一个 ~\(≧▽≦)/~
+
+最后封装一下，开发了[第二版](0007_copy-text-for-phone-v2.html)，喜极而泣呀。。。
+
+【通过源码看到，手法上是通过 `document.execCommand` 的方法，但我的第一版不行，后期要解析一下。。。】
+
 ## 解决
+
+[第一版](0007_copy-text-for-phone.html)
 
 ```
 /**
@@ -64,7 +74,97 @@ function func_copy( text, callback ) {
 };
 ```
 
-[测试页面](0007_copy-text-for-phone.html)
+[第二版](0007_copy-text-for-phone-v2.html)，需要引入 [clipboard.js](0007_dist/clipboard.js) 文件，和封装好的 [MyClipboard 对象](0007_dist/MyClipboard.js)
+
+```
+// dist/MyClipboard.js
+var MyClipboard = {
+
+    /**
+     * 具有复制功能的元素的 id
+     */
+    node_id : 'copy-src',
+
+    /**
+     * 初始化（页面加载完调用）
+     */
+    init : function() {
+
+        var n_self = this;
+
+        var n_copy_src = document.createElement( 'span' );
+
+        n_copy_src.id = n_self.node_id;
+        n_copy_src.style.display = 'none';
+        n_copy_src.setAttribute( 'data-clipboard-text', '' );
+
+        document.body.appendChild( n_copy_src );
+
+        var clipboard = new Clipboard( '#' + n_self.node_id );
+
+        clipboard.on( 'success', function(e) {
+            typeof n_self.success === 'function' && n_self.success( e );
+        } );
+
+        clipboard.on( 'error', function(e) {
+            typeof n_self.error === 'function' && n_self.error( e );
+        } );
+    },
+
+    /**
+     * 复制成功的回调
+     */
+    success : function( e ) {},
+
+    /**
+     * 复制失败的回调
+     */
+    error : function(e) {},
+
+    /**
+     * 复制文本
+     * 
+     * @param {string} copy_text 需要复制的文本
+     */
+    copy : function( copy_text ) {
+
+        var n_copy_src = document.getElementById( this.node_id );
+
+        n_copy_src.setAttribute( 'data-clipboard-text' , copy_text );
+
+        n_copy_src.click();
+    }
+};
+
+...
+
+// 0007_copy-text-for-phone-v2.html
+
+// 复制初始化（必选）
+MyClipboard.init();
+
+// 复制成功的回调（可选）
+MyClipboard.success = function( e ) {
+    document.querySelector( '.tip' ).textContent = '复制 "' + e.text + '" 成功';
+};
+
+// 复制失败的回调（可选）
+MyClipboard.error = function( e ) {
+    document.querySelector( '.tip' ).textContent = '复制失败';
+};
+
+// 测试用例
+document.getElementById( 'random-copy' ).addEventListener( 'click', function() {
+
+    var d_random = Math.random(); // 产生随机值
+
+    document.getElementById( 'paste-field' ).value = ''; // 清空黏贴区域
+
+    // 复制文本（必选）
+    MyClipboard.copy( d_random );
+
+}, false );
+```
 
 ## 参考
 
@@ -75,3 +175,7 @@ function func_copy( text, callback ) {
 1. [clipBoardEvent, execCommand等粘贴板相关研究](http://blog.csdn.net/twoByte/article/details/52250205)
 
 1. [怎么在微信浏览器中用js触发copy事件？](https://segmentfault.com/q/1010000006072576)
+
+1. [clipboardjs 官网](https://clipboardjs.com/)
+
+1. [clipboardjs 包地址](https://github.com/zenorocha/clipboard.js/archive/master.zip)
