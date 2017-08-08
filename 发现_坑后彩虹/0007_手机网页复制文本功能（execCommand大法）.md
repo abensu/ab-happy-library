@@ -166,6 +166,10 @@ document.getElementById( 'random-copy' ).addEventListener( 'click', function() {
 }, false );
 ```
 
+## 补充
+
+1. [2017/08/08] clipboardjs 的复制，只能通过 dom 的 click、mouseup、touchend 来促发，不能绑定的到 mousedown、touchstart 事件，不然促发会不成功【此 bug 是通过layabox 1.7.7beta 在手机调试模式下，所有 click、mouse、touch 事件都是 touchstart 事件促发而发现的】
+
 ## 参考
 
 1. [Javascript中document.execCommand()的用法](http://blog.csdn.net/woshinia/article/details/18664903)
