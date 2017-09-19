@@ -135,6 +135,28 @@ svn checkout svn://127.0.0.1 /home/my-project
 killall svnserve && svnserve -d -r /home/my-project
 ```
 
+## svn 的钩子
+
+在 `/home/my-svn/hooks` 文件夹下有 `post-lock.tmpl`、`post-unlock.tmpl`、`pre-lock.tmpl`、`pre-unlock.tmpl`、`post-commit.tmpl`、`post-revprop-change.tmpl`、`pre-commit.tmpl`、`pre-revprop-change.tmpl`、`start-commit.tmpl`，这些都是 svn 每个数据处理阶段的钩子脚本模板（要去掉 `.tmpl` 后缀，并变为可执行文件才可使用）。
+
+* `pre-lock`、`post-lock`：加锁前、加锁后
+
+* `pre-unlock`、`post-unlock`：解锁前、解锁后
+
+* `pre-revprop-change`、`post-revprop-change`：恢复某版本之前、恢复某版本之后
+
+* `pre-commit`、`start-commit`、`post-commit`：数据提交前、数据开始提交、数据提交完毕
+
+例如，我们想在数据顺利提交到 svn 服务端后，`update` 服务器的 svn 客户端数据。
+
+1. 先新建 `post-commit` 文件，并编辑以下内容：
+
+    ```
+    cd /home/my-project && svn update
+    ```
+
+1. 保存好文件后，对文件执行 `chmod a+x post-commit`，然后就能正常被调用了。
+
 ## 其他小技巧
 
 * 完整删除文件夹：`rm -r -f /home/my-project`
