@@ -8,10 +8,9 @@
 
 * SRI：子资源完整性，给 `script`、`link` 等标签添加，页面添加 `integrity`属性（非同域资源追加 `crossorigin="anonymous"`），其值为文件的 `算法-签名`（`sha256`、`sha384` 或 `sha512`）
 
+* `X-Frame-Options`：子框架展示授权
+
 * HTTPS：使用 `https` 协议，这是最好的解决方案
-
-* `X-Frame-Options`：禁止 iframe
-
 以上方法均可搭配使用。
 
 ## CSP（Content Security Policy，内容安全策略）
@@ -22,14 +21,13 @@
 
 * 页面附加 `Content-Security-Policy` 头信息（还有过渡版的 `X-Content-Security-Policy`、`X-Webkit-CSP`）
     ```
-    # 后端添加头信息
+    (1) 后端添加头信息
     Content-Security-Policy: default-src 'self'; img-src 'self' img.a.com *.b.com https://*.c.com
 
-    # 前端添加 meta 信息
+    (2) 或者，前端添加 meta 信息
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' img.a.com *.b.com https://*.c.com">
 
-    # 默认加载的图片、脚本、样式等资源都要来自当前域，否则资源会被过滤掉
-    # 但图片资源可另外来自 img.a.com 的域，和 b.com 的各三级域名，和 c.com 的各三级域名的 https 协议资源
+    (3) 默认加载的图片、脚本、样式等资源都要来自当前域，否则资源会被过滤掉，但图片资源可另外来自 img.a.com 的域，和 b.com 的各三级域名，和 c.com 的各三级域名的 https 协议资源
     ```
 
 ### 指令、关键字、数据
@@ -86,7 +84,7 @@ Content-Security-Policy: script-src 'sha256-2T7JHEjkVQmJ3kSbjdYofbAY6RLNkRjOG9Zz
 
 ### 作用
 
-* `eval`、`new Function`、`setTimeout`、`setInterval` 等会被禁用（通过 `'unsafe-inline'` 可避免）
+* `eval`、`new Function`、`setTimeout`、`setInterval` 等会被禁用（通过 `'unsafe-eval'` 可避免）
 
 * 内嵌 js 代码和内嵌样式，将不会执行（通过 `'unsafe-inline'` 可避免）
 
@@ -114,7 +112,7 @@ Content-Security-Policy: script-src 'sha256-2T7JHEjkVQmJ3kSbjdYofbAY6RLNkRjOG9Zz
 
 ### 原理
 
-加了 `integrity` 属性的资源标签，如果其目标资源的算法签名，与加载后资源的算法签名不一致，浏览器就不会执行该资源。
+加了 `integrity` 属性的资源标签，如果其目标资源的算法签名，与加载后资源的算法签名不一致，浏览器就不会执行该资源（但资源还是会加载的）。
 
 ### 作用
 
@@ -127,6 +125,48 @@ Content-Security-Policy: script-src 'sha256-2T7JHEjkVQmJ3kSbjdYofbAY6RLNkRjOG9Zz
 如果主程序加载不成功（因被篡改），后面的交互就有问题，这个需要考虑；这种方法防止不了页面被插入脚本或样式的情况。。。
 
 Github 启用 SRI 是为了减少托管在 CDN 的资源被篡改而引入 XSS 的风险。
+
+> tips：想快速在浏览器获取资源的算法，可仅设置 `integrity="sha256-x"`，然后将提示的算法值再复制到属性值中
+
+## 子框架展示授权（X-Frame-Options）
+
+### 前提
+
+* 浏览器支持版本：`IE 8+`、`Edge 12+`、`Firefox 4+`、`Chrome 26+`、`Safari 5.1+`、`IOS Safari 7.1+`、`Android Browser 4+`等（具体请看[该链接](http://caniuse.com/#search=X-Frame-Options)）
+
+* 只能后端设置头信息 `X-Frame-Options`
+
+* CSP Level 2 规范中的 `frame-ancestors` 指令会替代这个非标准的 header，但为了兼容，还是建议加上此头信息
+
+### 取值
+
+* `DENY`：不允许在任何 frame 中展示
+
+    ![DENY示例](resource/0001-0002.png)
+
+* `SAMEORIGIN`：允许在同域的 frame 展示【建议使用该值】
+
+    ![SAMEORIGIN示例](resource/0001-0001.png)
+
+* `ALLOW-FROM uri`：允许指定来源的 frame 展示【此取值兼容性较差，一般不建议使用，暂时只有火狐可以支持】
+
+    ![ALLOW-FROM示例](resource/0001-0004.png)
+
+如果取值有误，浏览器会报 `Invalid 'X-Frame-Options' header encountered` 错误，开发时请留意。
+
+![报错示例](resource/0001-0003.png)
+
+### 原理
+
+`X-Frame-Options` HTTP 响应头是用来给浏览器指示允许一个页面可否在 `<frame>`, `<iframe>` 或者 `<object>` 中展现的标记。
+
+### 作用
+
+网站可以使用此功能，来确保自己网站的内容没有被嵌到别人的网站中去，也从而避免了点击劫持 (clickjacking) 的攻击。
+
+### 小结
+
+如果不想自己的页面被嵌入到第三方的 `frame` 中展示，请使用该头信息。
 
 ## 参考文章
 
@@ -143,3 +183,5 @@ Github 启用 SRI 是为了减少托管在 CDN 的资源被篡改而引入 XSS �
 * [Subresource Integrity 介绍](https://imququ.com/post/subresource-integrity.html)
 
 * [谨慎能捕千秋蝉（三）——界面操作劫持与HTML5安全](http://blog.csdn.net/c2iekqea/article/details/55684701)
+
+* [X-Frame-Options 响应头](https://developer.mozilla.org/zh-CN/docs/Web/HTTP/X-Frame-Options)

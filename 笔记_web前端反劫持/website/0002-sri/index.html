@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>SRI</title>
+</head>
+<body>
+    <!-- 同域：成功 -->
+    <!-- <script src="/sri/static/test.js"></script> -->
+
+    <!-- 同域：成功，但会报解析错误，因为算法值非标准 -->
+    <!-- <script src="/sri/static/test.js" integrity="hello test"></script> -->
+
+    <!-- 同域：失败，文件算法值错误 -->
+    <!-- <script src="/sri/static/test.js" integrity="sha384-rwoIResjU2yc3z"></script> -->
+
+    <!-- 同域：成功 -->
+    <script src="/sri/static/test.js" integrity="sha256-OX1Oj1UPTV7gpvDkdSmvnvv3ZlYem862fAo27FthMfo="></script>
+
+    <!-- 异域：成功 -->
+    <!-- <script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script> -->
+
+    <!-- 异域：失败，跨域资源需要添加 crossorigin 属性 -->
+    <!-- <script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js" integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ="></script> -->
+    
+    <!-- 异域：成功 -->
+    <!-- <script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js" integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin="anonymous"></script> -->
+</body>
+</html>

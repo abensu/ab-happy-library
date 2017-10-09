@@ -1,0 +1,18 @@
+{
+  "name": "hijack-defense",
+  "version": "1.0.0",
+  "description": "hijack defense",
+  "main": "index.js",
+  "dependencies": {
+    "restify": "^6.0.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "hijack"
+  ],
+  "author": "abensu",
+  "license": "ISC"
+}
