@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <!-- <meta http-equiv="Content-Security-Policy" content="default-src 'self'"> -->
+    <!-- <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src localhost:8903"> -->
+    <!-- <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' localhost:8903"> -->
+    <title>注入图片</title>
+</head>
+<body>
+    <h1>注入图片</h1>
+    <img src="/csp/case-photo/photo.png" alt="正常的图片" width="150" />
+    <br>
+    <img src="http://localhost:8903/csp/case-photo/photo.png" alt="注入的图片" width="150" />
+</body>
+</html>

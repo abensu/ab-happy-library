@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <!-- <meta http-equiv="Content-Security-Policy" content="default-src 'self'"> -->
+    <!-- <meta http-equiv="Content-Security-Policy" content="default-src 'self'; frame-src localhost:8903"> -->
+    <!-- <meta http-equiv="Content-Security-Policy" content="default-src 'self'; frame-src 'self' localhost:8903"> -->
+    <title>注入 iframe</title>
+</head>
+<body>
+    <h1>注入 iframe</h1>
+    <p>http://127.0.0.1:8903/csp/case-iframe-top/iframe.html</p>
+    <iframe src="http://127.0.0.1:8903/csp/case-iframe-top/iframe.html" frameborder="1"></iframe>
+    <p>http://localhost:8903/csp/case-iframe-top/iframe.html</p>
+    <iframe src="http://localhost:8903/csp/case-iframe-top/iframe.html" frameborder="1"></iframe>
+</body>
+</html>

@@ -11,6 +11,7 @@
 * `X-Frame-Options`：子框架展示授权
 
 * HTTPS：使用 `https` 协议，这是最好的解决方案
+
 以上方法均可搭配使用。
 
 ## CSP（Content Security Policy，内容安全策略）

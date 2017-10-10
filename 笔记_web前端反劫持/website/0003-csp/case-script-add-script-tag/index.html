@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'">
+    <!-- <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'sha256-c2ncwulT+3ascT1kXG+XHrtJnf7BRehzqUeWqkR496I='"> -->
+    <title>注入行内</title>
+</head>
+<body>
+    <h1>注入行内</h1>
+
+    <script>
+        document.documentElement.addEventListener( 'click', function() {
+            alert( '跳转' );
+        } );
+    </script>
+</body>
+</html>

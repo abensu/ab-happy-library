@@ -91,3 +91,27 @@ d_server.get( '/sri/sha256/:filename', ( request, response, next ) => {
 
     next();
 } );
+
+
+/**
+ * CSP 测试用例
+ */
+
+// 请求 /csp 指向 0003-csp/index.html 文件
+d_server.get( '/csp', mod_restify.plugins.serveStatic( {
+    directory   : mod_path.resolve( __dirname, '0003-csp' ),
+    file        : 'index.html',
+} ) );
+
+d_server.get( /^\/csp\/?.*/, ( request, response, next ) => {
+
+    let d_path = request.getPath().replace( /^\/csp\//, '' );
+
+    response.redirect( `/0003-csp/${d_path}`, next );
+} );
+
+// 请求 /csp/static 作为静态文件目录指向 0003-csp
+d_server.get( /^\/0003-csp\/?.*/, mod_restify.plugins.serveStatic( {
+    directory   : mod_path.resolve( __dirname ),
+    default     : 'index.html',
+} ) );
