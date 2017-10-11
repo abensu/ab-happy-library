@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>获取字符串的 sha256 值</title>
+</head>
+<body>
+    <p>本页地址为：/sri/static/get-sha256-by-text.html</p>
+
+    <textarea id="input" cols="30" rows="10" placeholder="输入字符串"></textarea>
+    <br>
+    <br>
+    <button id="submit">获取 sha256</button>
+    <br>
+    <br>
+    <textarea id="output" cols="30" rows="10" placeholder="输出 sha256 值"></textarea>
+
+    <script>
+        var
+            n_input     = document.getElementById( 'input' ),
+            n_submit    = document.getElementById( 'submit' ),
+            n_output    = document.getElementById( 'output' );
+        
+        n_submit.onclick = function() {
+
+            var d_ajax = new XMLHttpRequest();
+
+            d_ajax.onreadystatechange = function() {
+
+                if ( d_ajax.status === 200 && d_ajax.readyState === 4 ) {
+
+                    let d_json = JSON.parse( d_ajax.responseText );
+
+                    n_output.value = JSON.stringify( d_json, null, 2 );
+                }
+            }
+
+            d_ajax.open( 'GET', 'http://127.0.0.1:8903/sri/sha256/text?content=' + encodeURIComponent( n_input.value ), true );
+
+            d_ajax.send();
+        };
+    </script>
+</body>
+</html>

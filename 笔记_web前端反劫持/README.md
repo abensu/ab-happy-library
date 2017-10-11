@@ -177,6 +177,10 @@ Github 启用 SRI 是为了减少托管在 CDN 的资源被篡改而引入 XSS �
 
 * [CSP（内容安全策略）](https://baike.baidu.com/item/CSP/13343685?fr=aladdin)
 
+* [Content Security Policy 入门教程 ](https://yq.aliyun.com/articles/61144)【这篇会新一点，建议看一下】
+
+* [Content-Security-Policy-Report-Only](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy-Report-Only)
+
 * [Web前端页面劫持和反劫持](https://mp.weixin.qq.com/s/WbrXl2PS4Kh7JtqXRCGAzQ)
 
 * [Subresource Integrity](http://blog.csdn.net/wozaixiaoximen/article/details/56280461)

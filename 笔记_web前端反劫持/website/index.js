@@ -7,6 +7,12 @@ let mod_crypto  = require( 'crypto' );
 // 服务器实例
 let d_server = mod_restify.createServer();
 
+// 设置主体数据编译（支持 json 格式的 body）
+d_server.use( mod_restify.plugins.bodyParser() );
+
+// 设置参数编译
+d_server.use( mod_restify.plugins.queryParser() );
+
 // 设置 Gzip
 d_server.use( mod_restify.plugins.gzipResponse() );
 
@@ -62,7 +68,7 @@ d_server.get( /^\/sri\/static\/?.*/, mod_restify.plugins.serveStatic( {
 } ) );
 
 // 获取 0002-sri 文件夹中某文件的 base64 类型的 sha256 值
-d_server.get( '/sri/sha256/:filename', ( request, response, next ) => {
+d_server.get( '/sri/sha256/file/:filename', ( request, response, next ) => {
 
     let d_file_path = mod_path.resolve( __dirname, '0002-sri', request.params.filename );
 
@@ -92,6 +98,35 @@ d_server.get( '/sri/sha256/:filename', ( request, response, next ) => {
     next();
 } );
 
+// 获取指定字段的 base64 类型的 sha256 值
+d_server.get( '/sri/sha256/text', ( request, response ) => {
+    
+    response.charSet( 'utf8' );
+
+    if ( request.query.content ) {
+
+        let d_sha = mod_crypto.createHash( 'sha256' );
+
+        d_sha.update( request.query.content );
+
+        response.send( {
+            code    : 0,
+            msg     : 'success',
+            content : request.query.content,
+            sha256  : d_sha.digest( 'base64' ),
+        } );
+
+    } else {
+
+        response.send( {
+            code    : 1,
+            msg     : 'no text',
+            content : '',
+            sha256  : '',
+        } );
+    }
+} );
+
 
 /**
  * CSP 测试用例
@@ -103,15 +138,54 @@ d_server.get( '/csp', mod_restify.plugins.serveStatic( {
     file        : 'index.html',
 } ) );
 
-d_server.get( /^\/csp\/?.*/, ( request, response, next ) => {
+// 请求以 /csp/ 开头的请求都跳到 /0003-csp/
+d_server.get( /^\/csp\/.*/, ( request, response, next ) => {
 
     let d_path = request.getPath().replace( /^\/csp\//, '' );
 
     response.redirect( `/0003-csp/${d_path}`, next );
 } );
 
-// 请求 /csp/static 作为静态文件目录指向 0003-csp
+// 请求 /0003-csp 作为静态文件目录
 d_server.get( /^\/0003-csp\/?.*/, mod_restify.plugins.serveStatic( {
     directory   : mod_path.resolve( __dirname ),
     default     : 'index.html',
 } ) );
+
+// 返回上报内容
+d_server.post( '/csp-report', ( request, response ) => {
+
+    let d_path = mod_path.resolve( __dirname, '0003-csp/case-report/report-from-post.txt' );
+
+    let d_json = JSON.parse( request.body.toString() );
+
+    mod_fs.appendFileSync( d_path, `// ${( new Date() ).toLocaleString()}\n` + JSON.stringify( d_json, null, 2 ) + '\n', 'utf8' );
+
+    response.charSet( 'utf8' );
+
+    response.send( request.body );
+} );
+
+// CSP 上报
+d_server.get( '/csp-report-page/:type', ( request, response ) => {
+
+    let d_type = request.params.type;
+    
+    response.setHeader( 'Cache-Control', 'public, max-age=3600' );
+    response.setHeader( 'Content-Type', 'text/html; charset=utf-8' );
+
+    if ( d_type === 'report-and-block' ) {
+
+        // 拦截并上报
+
+        response.setHeader( 'Content-Security-Policy', `default-src 'self';report-uri /csp-report` );
+        
+    } else if ( d_type === 'report-no-block' ) {
+
+        // 拦截不上报
+
+        response.setHeader( 'Content-Security-Policy-Report-Only', `default-src 'self';report-uri /csp-report` );
+    }
+
+    response.end( mod_fs.readFileSync( mod_path.resolve( __dirname, '0003-csp/case-report/index.html' ), 'utf8' ) );
+} );

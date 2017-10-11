@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <!-- Content-Security-Policy 由后端配置 -->
+    <!-- 拦截并上报：http://127.0.0.1:8903/csp-report-page/report-and-block -->
+    <!-- 拦截不上报：http://127.0.0.1:8903/csp-report-page/report-no-block -->
+    <title>上报</title>
+</head>
+<body>
+    <h1>上报</h1>
+
+    <img src="/csp/case-report/photo.png" alt="正常图片" width="150" />
+    <iframe src="http://localhost:8903/csp/case-report/hijack.html"></iframe>
+</body>
+</html>
