@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <!-- <meta http-equiv="Content-Security-Policy" content="default-src 'self'"> -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'">
     <!-- <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'sha256-hWmvWt3EA01n6mSDkNBfN+9/K2ZYZhs8cBNoGAIDB98='"> -->
     <!-- <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' localhost:8903; style-src 'sha256-hWmvWt3EA01n6mSDkNBfN+9/K2ZYZhs8cBNoGAIDB98='"> -->
     <!-- <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'unsafe-inline'"> -->
@@ -15,7 +15,7 @@
     <h1>注入行内</h1>
 
     <style>
-        #hijack-ele {display: block;width: 210px;height: 52px;background: url(http://localhost:8903/csp/case-photo/photo.png);}
+        #hijack-ele {display: block;width: 210px;height: 52px;background: url(http://localhost:8903/csp-static/photo.png);}
     </style>
     <a href="#" id="hijack-ele"></a>
 </body>

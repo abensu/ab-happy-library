@@ -1,6 +1,11 @@
+var
+    n_h2 = document.createElement( 'h2' );
 
+    n_h2.textContent = '我是好元素';
 
-// 假设原脚本不变，仅在后面添加如下脚本
+    document.body.appendChild( n_h2 );
+
+// 以下是注入的内容
 
 var n_a = document.createElement( 'a' );
 

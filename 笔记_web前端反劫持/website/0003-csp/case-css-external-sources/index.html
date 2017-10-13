@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <!-- <meta http-equiv="Content-Security-Policy" content="default-src 'self'"> -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'">
     <!-- <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' localhost:8903"> -->
     <!-- <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' localhost:8903; style-src 'self' localhost:8903"> -->
     <title>注入外部样式</title>
@@ -12,7 +12,7 @@
 <body>
     <h1>注入外部样式</h1>
 
-    <link rel="stylesheet" href="http://localhost:8903/csp/case-css-external-sources/hijack.css">
+    <link rel="stylesheet" href="http://localhost:8903/csp-static/hijack.css">
     <a href="#" id="hijack-ele"></a>
 </body>
 </html>

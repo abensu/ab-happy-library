@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <!-- <meta http-equiv="Content-Security-Policy" content="default-src 'self'"> -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'">
     <!-- <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'sha256-c2ncwulT+3ascT1kXG+XHrtJnf7BRehzqUeWqkR496I='"> -->
     <!-- <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'nonce-201710111122'"> -->
     <title>注入行内</title>
@@ -12,11 +12,11 @@
 <body>
     <h1>注入行内</h1>
 
-    <!-- <script>
+    <script>
         document.documentElement.addEventListener( 'click', function() {
             alert( '跳转A' );
         } );
-    </script> -->
+    </script>
 
     <!-- <script nonce="201710111122">
         document.documentElement.addEventListener( 'click', function() {

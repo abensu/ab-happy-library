@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta http-equiv="Content-Security-Policy" content="img-src 'none';">
+    <meta http-equiv="Content-Security-Policy" content="img-src 'self';">
+    <meta http-equiv="Content-Security-Policy" content="img-src *;">
+    
+    <!-- <meta http-equiv="Content-Security-Policy" content="img-src *; frame-src 'self';">
+    <meta http-equiv="Content-Security-Policy" content="img-src 'self'; frame-src *;"> -->
+    
+    <title>页面重复 CSP</title>
+</head>
+<body>
+    <h1>页面重复 CSP</h1>
+    <p>每一行都会进行白名单验证，而不是某个属性只用最新/底部的值，具体请看 console 的提示（可以想象为一层一层的网）</p>
+    <hr>
+    <img src="http://localhost:8903/csp-static/photo.png" alt="外源图片" />
+    <br>
+    <iframe src="http://localhost:8903/csp-static/hijack.html"></iframe>
+</body>
+</html>

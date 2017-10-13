@@ -10,6 +10,8 @@
 
 * `X-Frame-Options`：子框架展示授权
 
+* <del>`X-XSS-Protection`：跨站脚本攻击防御</del>【然并卵，无论设置在页面还是资源的头信息，都没啥作用，内嵌或非同源脚本照样执行】
+
 * HTTPS：使用 `https` 协议，这是最好的解决方案
 
 以上方法均可搭配使用。
@@ -169,6 +171,7 @@ Github 启用 SRI 是为了减少托管在 CDN 的资源被篡改而引入 XSS �
 
 如果不想自己的页面被嵌入到第三方的 `frame` 中展示，请使用该头信息。
 
+
 ## 参考文章
 
 * [浏览器安全策略说之内容安全策略CSP](http://sec.chinabyte.com/106/12923606_all.shtml)
@@ -181,7 +184,9 @@ Github 启用 SRI 是为了减少托管在 CDN 的资源被篡改而引入 XSS �
 
 * [Content-Security-Policy-Report-Only](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy-Report-Only)
 
-* [Web前端页面劫持和反劫持](https://mp.weixin.qq.com/s/WbrXl2PS4Kh7JtqXRCGAzQ)
+* [Content Security Policy (CSP) 是什么？为什么它能抵御 XSS 攻击？](https://www.zhihu.com/question/21979782)【知乎的多观点解说】
+
+* [Web前端页面劫持和反劫持](https://mp.weixin.qq.com/s/WbrXl2PS4Kh7JtqXRCGAzQ)【这篇文章有质量，强烈建议阅读】
 
 * [Subresource Integrity](http://blog.csdn.net/wozaixiaoximen/article/details/56280461)
 
@@ -190,3 +195,5 @@ Github 启用 SRI 是为了减少托管在 CDN 的资源被篡改而引入 XSS �
 * [谨慎能捕千秋蝉（三）——界面操作劫持与HTML5安全](http://blog.csdn.net/c2iekqea/article/details/55684701)
 
 * [X-Frame-Options 响应头](https://developer.mozilla.org/zh-CN/docs/Web/HTTP/X-Frame-Options)
+
+* [header的安全配置指南](http://www.cnblogs.com/doseoer/p/5676297.html)

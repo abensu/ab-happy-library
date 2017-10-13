@@ -51,6 +51,56 @@ d_server.get( '/x-frame-options/child', ( request, response ) => {
 
 
 /**
+ * x-xss-protection 测试用例
+ */
+
+// [网页]
+d_server.get( '/x-xss-protection', ( request, response ) => {
+    
+    response.setHeader( 'Content-Type', 'text/html; charset=utf-8' );
+    // response.setHeader( 'X-XSS-Protection', '0' );
+    // response.setHeader( 'X-XSS-Protection', '1' );
+    response.setHeader( 'X-XSS-Protection', '1; mode=block' );
+    response.end( mod_fs.readFileSync( '0004-x-xss-protection/index.html', 'utf8' ) );
+} );
+
+// [资源]
+d_server.get( '/x-xss-protection-static/base.js', ( request, response ) => {
+    
+    response.setHeader( 'Content-Type', 'application/javascript' );
+    // response.setHeader( 'X-XSS-Protection', '0' );
+    // response.setHeader( 'X-XSS-Protection', '1' );
+    response.setHeader( 'X-XSS-Protection', '1; mode=block' );
+    response.end( mod_fs.readFileSync( '0004-x-xss-protection/base.js', 'utf8' ) );
+} );
+
+// 请求 /x-xss-protection-static 作为静态文件目录指向 0004-x-xss-protection
+// d_server.get( /^\/x-xss-protection-static\/?.*/, mod_restify.plugins.serveStatic( {
+//     directory           : mod_path.resolve( __dirname, '0004-x-xss-protection' ),
+//     appendRequestPath   : false,
+//     default             : 'index.html',
+// } ) );
+
+
+/**
+ * dom 测试用例
+ */
+
+// 请求 /dom 指向 0005-dom/index.html 文件
+d_server.get( '/dom', mod_restify.plugins.serveStatic( {
+    directory   : mod_path.resolve( __dirname, '0005-dom' ),
+    file        : 'index.html',
+} ) );
+
+// 请求 /dom/static 作为静态文件目录指向 0005-dom
+d_server.get( /^\/dom\/static\/?.*/, mod_restify.plugins.serveStatic( {
+    directory           : mod_path.resolve( __dirname, '0005-dom' ),
+    appendRequestPath   : false,
+    default             : 'index.html',
+} ) );
+
+
+/**
  * SRI 测试用例
  */
 
@@ -152,7 +202,13 @@ d_server.get( /^\/0003-csp\/?.*/, mod_restify.plugins.serveStatic( {
     default     : 'index.html',
 } ) );
 
-// 返回上报内容
+// 请求 /csp-static 作为静态文件目录
+d_server.get( /^\/csp-static\/?.*/, mod_restify.plugins.serveStatic( {
+    directory   : mod_path.resolve( __dirname, '0003-csp' ),
+    default     : 'index.html',
+} ) );
+
+// [接口]返回上报内容
 d_server.post( '/csp-report', ( request, response ) => {
 
     let d_path = mod_path.resolve( __dirname, '0003-csp/case-report/report-from-post.txt' );
@@ -166,7 +222,7 @@ d_server.post( '/csp-report', ( request, response ) => {
     response.send( request.body );
 } );
 
-// CSP 上报
+// [网页]CSP 上报
 d_server.get( '/csp-report-page/:type', ( request, response ) => {
 
     let d_type = request.params.type;
@@ -188,4 +244,27 @@ d_server.get( '/csp-report-page/:type', ( request, response ) => {
     }
 
     response.end( mod_fs.readFileSync( mod_path.resolve( __dirname, '0003-csp/case-report/index.html' ), 'utf8' ) );
+} );
+
+// [网页]页面重置 CSP
+d_server.get( '/csp-reset-csp-page/1', ( request, response ) => {
+    
+    let d_type = request.params.type;
+    
+    response.setHeader( 'Cache-Control', 'public, max-age=3600' );
+    response.setHeader( 'Content-Type', 'text/html; charset=utf-8' );
+    response.setHeader( 'Content-Security-Policy', `default-src 'self'` );
+
+    response.end( mod_fs.readFileSync( mod_path.resolve( __dirname, '0003-csp/case-reset-csp/index.html' ), 'utf8' ) );
+} );
+
+// [网页]页面重置 CSP
+d_server.get( '/csp-reset-csp-page/2', ( request, response ) => {
+    
+    let d_type = request.params.type;
+    
+    response.setHeader( 'Cache-Control', 'public, max-age=3600' );
+    response.setHeader( 'Content-Type', 'text/html; charset=utf-8' );
+
+    response.end( mod_fs.readFileSync( mod_path.resolve( __dirname, '0003-csp/case-reset-csp/index-2.html' ), 'utf8' ) );
 } );
