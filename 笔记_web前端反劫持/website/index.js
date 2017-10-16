@@ -99,6 +99,18 @@ d_server.get( /^\/dom\/static\/?.*/, mod_restify.plugins.serveStatic( {
     default             : 'index.html',
 } ) );
 
+// 请求 /dom-report
+d_server.post( '/dom-report', ( request, response ) => {
+
+    response.setHeader( 'X-Hajack-Report', 'success' );
+    response.end( '' );
+
+    // 处理请求过来的数据
+    console.log( request.body.time );
+    console.log( request.body.from );
+    console.log( request.body.content );
+} );
+
 
 /**
  * SRI 测试用例

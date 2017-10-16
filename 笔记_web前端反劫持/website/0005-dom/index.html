@@ -45,6 +45,15 @@
     </style>
     <a href="http://127.0.0.1:8903/dom/static/photo.png" id="ele-0003">http://127.0.0.1:8903/dom/static/photo.png</a>
 
+    <h3>a bind event【暂时无法防御】</h3>
+    <a href="#" onclick="location.href='http://localhost:8903/dom/static/iframe.html'" id="tt-1">http://localhost:8903/dom/static/iframe.html</a>
+    <a href="#" id="ele-4">http://localhost:8903/dom/static/iframe.html</a>
+    <script>
+        document.getElementById( 'ele-4' ).onclick = function() {
+            location.href = 'http://localhost:8903/dom/static/iframe.html';
+        };
+    </script>
+    
     <hr>
     
     <h3>script</h3>
@@ -130,18 +139,51 @@
     <hr>
     
     <h3>object / object + param</h3>
-    <object data="/dom/static/iframe.html" width="100" height="50"></object>
-    <object data="http://127.0.0.1:8903/dom/static/iframe.html" width="100" height="50"></object>
-    <object data="http://localhost:8903/dom/static/iframe.html" width="100" height="50"></object>
-    <object width="100" height="50">
+    <object data="/dom/static/iframe.html" width="300" height="50"></object>
+    <object data="http://127.0.0.1:8903/dom/static/iframe.html" width="300" height="50"></object>
+    <object data="http://localhost:8903/dom/static/iframe.html" width="300" height="50"></object>
+    <object width="300" height="50">
         <param name="src" value="/dom/static/iframe.html">
     </object>
-    <object width="100" height="50">
+    <object width="300" height="50">
         <param name="src" value="http://127.0.0.1:8903/dom/static/iframe.html">
     </object>
-    <object width="100" height="50">
+    <object width="300" height="50">
         <param name="src" value="http://localhost:8903/dom/static/iframe.html">
     </object>
+
+    <h3>embed / object + param + embed</h3>
+    <embed src="/dom/static/iframe.html" type="text/html" />
+    <embed src="http://127.0.0.1:8903/dom/static/iframe.html" type="text/html" />
+    <embed src="http://localhost:8903/dom/static/iframe.html" type="text/html" />
+    <object width="300" height="50">
+        <param name="src" value="http://localhost:8903/dom/static/iframe.html">
+        <embed src="http://localhost:8903/dom/static/iframe.html" type="text/html" />
+    </object>
+
+    <h3>area</h3>
+    <img src="/dom/static/photo.png" width="200" height="50" alt="Planets" usemap="#planetmap">
+    <map name="planetmap">
+        <area shape="rect" coords="0,0,50,50" title="/dom/static/iframe.html" href="/dom/static/iframe.html">
+        <area shape="rect" coords="50,0,100,50" title="http://127.0.0.1:8903/dom/static/iframe.html" href="http://127.0.0.1:8903/dom/static/iframe.html">
+        <area shape="rect" coords="100,0,150,50" title="http://localhost:8903/dom/static/iframe.html" href="http://localhost:8903/dom/static/iframe.html">
+    </map>
+
+    <h3>base</h3>
+    <base href="/dom/static/iframe.html">
+    <base href="http://127.0.0.1:8903/dom/static/iframe.html">
+    <base href="http://localhost:8903/dom/static/iframe.html">
+
+    <h3>form</h3>
+    <form action="/dom/static/iframe.html">
+        <button type="submit">/dom/static/iframe.html</button>
+    </form>
+    <form action="http://127.0.0.1:8903/dom/static/iframe.html">
+        <button type="submit">http://127.0.0.1:8903/dom/static/iframe.html</button>
+    </form>
+    <form action="http://localhost:8903/dom/static/iframe.html">
+        <button type="submit">http://localhost:8903/dom/static/iframe.html</button>
+    </form>
     
     <script src="/dom/static/hijack-defense.js"></script>
 </body>

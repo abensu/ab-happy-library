@@ -4,13 +4,13 @@
  * @description
  *  默认情况下，当前域名是安全的，检测的元素首先要都是当前域的资源
  */
-var HJD = ( function( doc, win, undefined ) {
+var HJD = ( function( white_list_config, defense_level, doc, win, undefined ) {
 
     /** 各 host 对应的白名单列表 */
-    var d_g_white_list_config = {
+    var d_g_white_list_config = white_list_config;
 
-        // '127.0.0.1:8903' : [ 'localhost:8903' ]
-    };
+    /** 防御级别 */
+    var d_g_defense_level = defense_level;
 
     /** 当前页面的 host 值 */
     var d_g_cur_host = location.host;
@@ -33,6 +33,41 @@ var HJD = ( function( doc, win, undefined ) {
     };
 
     /**
+     * 检测某个元素是否在列表中
+     * 
+     * @param {any}     ele     要检测的元素
+     * @param {any[]}   list    验证的列表
+     * 
+     * @returns {boolean} 是否存在
+     */
+    var f_g_check_in_list = ( function() {
+        
+        if ( typeof Array.prototype.indexOf === 'function' ) {
+
+            return function( ele, list ) {
+
+                return list.indexOf( ele ) >= 0;
+            };
+
+        } else {
+
+            return function( ele, list ) {
+
+                for ( var i = list.length; i--; ) {
+                    
+                    if ( list[ i ] === ele ) {
+    
+                        return true;
+                    }
+                }
+    
+                return false;
+            };
+        }
+
+    } )();
+
+    /**
      * 页面快照并判断是否有第三方（非白名单）链接
      * 
      * @returns {boolean} 是否有第三方（非白名单）链接
@@ -47,9 +82,7 @@ var HJD = ( function( doc, win, undefined ) {
 
             for ( var i = d_match.length; i--; ) {
 
-                var d_host = f_g_get_host( d_match[ i ] );
-
-                if ( d_g_white_list.indexOf( d_host ) < 0 ) {
+                if ( !f_g_check_in_list( f_g_get_host( d_match[ i ] ), d_g_white_list ) ) {
 
                     return true;
                 }
@@ -222,11 +255,11 @@ var HJD = ( function( doc, win, undefined ) {
 
         for ( var i = nodeUrlInfo_list.length; i --; ) {
 
-            var d_check_url = nodeUrlInfo_list[ i ].host;
+            var d_nuis_each = nodeUrlInfo_list[ i ];
 
-            if ( white_list_host.indexOf( d_check_url ) < 0 ) {
+            if ( !f_g_check_in_list( d_nuis_each.host, white_list_host ) ) {
 
-                d_res_nuis.push( nodeUrlInfo_list[ i ] );
+                d_res_nuis.push( d_nuis_each );
             }
         }
 
@@ -256,9 +289,61 @@ var HJD = ( function( doc, win, undefined ) {
             d_back_nuis.length && n_no_pass_nanuis.push( new M_NodeAndNodeUrlInfos( n_tar, d_back_nuis ) );
         }
 
-        // console.log( n_no_pass_nanuis );
-
         return n_no_pass_nanuis;
+    };
+
+    /**
+     * 上报元素与元素地址信息集合中的元素（整合信息，上传到 /dom-report，数据结构随便想的，应与后端进一步确定）
+     * 
+     * @param {M_NodeAndNodeUrlInfos[]} nanuis 要上报的标签列表
+     */
+    function f_g_report_nodeAndNodeUrlInfos ( nanuis ) {
+
+        var d_report_list = []; // [ 'iframe:src=http://localhost:8903/xxoo', ... ]
+
+        for ( var i = nanuis.length; i--; ) {
+
+            var d_nuis = nanuis[ i ].nodeUrlInfos;
+
+            for ( var n = d_nuis.length; n--; ) {
+
+                var d_nui = d_nuis[ n ];
+
+                d_report_list.push( d_nui.tagName + ':' + d_nui.from_prop + '=' + d_nui.url );
+            }
+        }
+
+        var d_content = d_report_list.join( '|' );
+
+        var d_from = location.href;
+
+        var d_time = +new Date();
+
+        var d_box_innerHtml = [
+            '<iframe name="hajack_report"></iframe>'
+            , '<form action="http://localhost:8903/dom-report" target="hajack_report" method="post">'
+            , '<input name="from" value="' + d_from + '" />'
+            , '<input name="time" value="' + d_time + '" />'
+            , '<input name="content" value="' + d_content + '" />'
+            , '</form>'
+        ].join( '' );
+
+        var n_box = doc.createElement( 'div' );
+
+        n_box.style.display = 'none';
+
+        n_box.innerHTML = d_box_innerHtml;
+
+        doc.body.appendChild( n_box );
+
+        n_box.getElementsByTagName( 'form' )[ 0 ].submit();
+
+        n_box.getElementsByTagName( 'iframe' )[ 0 ].onload = function() {
+
+            n_box.getElementsByTagName( 'iframe' )[ 0 ].src = 'about:blank';
+
+            n_box.parentNode.removeChild( n_box );
+        };
     };
 
     /**
@@ -294,6 +379,11 @@ var HJD = ( function( doc, win, undefined ) {
                     n_tar = n_tar_parent;
                     n_tar_parent = n_tar_parent.parentNode;
                     break;
+                
+                case 'html'     :
+                case 'body'     :
+                case 'head'     :
+                    return false;
             }
 
             n_tar_parent && n_tar_parent.removeChild( n_tar );
@@ -302,13 +392,36 @@ var HJD = ( function( doc, win, undefined ) {
         }
     };
 
-    // var d_g_bad_iframe  = f_g_check_nodes_and_get_no_pass_nodes( 'iframe' );
-    // var d_g_bad_img     = f_g_check_nodes_and_get_no_pass_nodes( 'img' );
+    /**
+     * 检测所有元素，并处理没有通过检测的元素（其实这是一个总入口函数）
+     */
+    function f_g_check_all_and_deal_with_no_pass_nodes () {
 
-    var d_g_bad_all     = f_g_check_nodes_and_get_no_pass_nodes( '*' );
+        var d_g_bad_all = f_g_check_nodes_and_get_no_pass_nodes( '*' );
+        
+        f_g_report_nodeAndNodeUrlInfos( d_g_bad_all );
 
-    f_g_release_nodeAndNodeUrlInfos( d_g_bad_all );
+        d_g_defense_level === 'strict' && f_g_release_nodeAndNodeUrlInfos( d_g_bad_all );
+    };
 
-    // console.log( f_g_screenshot_and_whether_have_3rd_url() );
+    /**
+     * 不要一开始就检测，等 load 完页面 1 秒后，UI 出来了，再进行检测与处理
+     */
+    setTimeout( function() {
 
-} )( document, window );
+        f_g_screenshot_and_whether_have_3rd_url() && f_g_check_all_and_deal_with_no_pass_nodes();
+
+    }, 1000 );
+
+} )
+(
+    // 各 host 对应的白名单列表
+    {
+        // '127.0.0.1:8903' : [ 'localhost:8903' ]
+    }
+    // 防御级别，"strict"：上报并删除元素，默认 "report"：仅上报
+    , 'strict'
+    // 下面为其他外部变量
+    , document
+    , window
+);
