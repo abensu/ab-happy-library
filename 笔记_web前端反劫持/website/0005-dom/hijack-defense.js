@@ -1,10 +1,12 @@
 /**
- * 劫持处理对象
+ * 劫持防御
  * 
  * @description
  *  默认情况下，当前域名是安全的，检测的元素首先要都是当前域的资源
  */
 var HJD = ( function( white_list_config, defense_level, doc, win, undefined ) {
+
+    'use strict';
 
     /** 各 host 对应的白名单列表 */
     var d_g_white_list_config = white_list_config;
@@ -76,7 +78,7 @@ var HJD = ( function( white_list_config, defense_level, doc, win, undefined ) {
 
         var d_screenshot = document.documentElement.outerHTML;
 
-        var d_match = d_screenshot.match( /http[s]*:\/\/[^)'"\s]+/g );
+        var d_match = d_screenshot.match( /http[s]*:\/\/[^\s'")]+/g );
 
         if ( d_match ) {
 
@@ -130,11 +132,12 @@ var HJD = ( function( white_list_config, defense_level, doc, win, undefined ) {
      * 根据元素上的链接，获取元素地址信息实例列表
      * 
      * @param {HTMLElement} node            html 元素
-     * @param {boolean}     includeStyle    是否要涉及到样式中会有相关图片路径的属性
+     * @param {boolean}     includeEleCSS   是否要涉及到元素样式中会有相关图片路径的属性
+     * @param {boolean}     includeEleEvent 是否要涉及到元素事件（如行内的 onclick 等）
      * 
      * @returns {M_NodeUrlInfo[]} 默认返回 []
      */
-    function f_g_get_ele_nuis ( node, includeStyle ) {
+    function f_g_get_ele_nuis ( node, includeEleCSS, includeEleEvent ) {
 
         var
             n_tar       = node,
@@ -195,7 +198,7 @@ var HJD = ( function( white_list_config, defense_level, doc, win, undefined ) {
 
                 var
                     d_style_con     = n_tar.textContent,
-                    d_style_match   = d_style_con.match( /http[s]*:\/\/[^)'"\s]+/g ),
+                    d_style_match   = d_style_con.match( /http[s]*:\/\/[^\s'")]+/g ),
                     d_match_urls    = d_style_match || [];
                 
                 for ( var i = d_match_urls.length; i--; ) {
@@ -214,9 +217,18 @@ var HJD = ( function( white_list_config, defense_level, doc, win, undefined ) {
                 break;
         }
 
-        if ( includeStyle ) {
+        includeEleCSS && ( function() {
 
             // 检测涉及到图片路径的样式属性
+            //
+            // 对以下情况进行处理：
+            //
+            // 情况一：
+            // <a id="hijack" style="background: url(http://localhost:8903/dom/static/photo.png)">
+            //
+            // 情况二：
+            // <style>#hijack {background: url(http://localhost:8903/dom/static/photo.png)}</style>
+            // <a id="hijack"></a>
 
             var
                 d_r_url_box         = /(^url\(['"]*)|(['"]*\)$)/g,
@@ -231,7 +243,56 @@ var HJD = ( function( white_list_config, defense_level, doc, win, undefined ) {
             ( d_host = f_g_get_host( d_tar_css_li_img ) )
                 && ( d_host !== d_g_cur_host )
                 && d_res_nuis.push( new M_NodeUrlInfo( n_tar, d_tar_css_li_img, 'style' ) );
-        }
+        } )();
+
+        includeEleEvent && ( function() {
+
+            // 检测涉及到行内脚本的属性
+            //
+            // 对以下情况进行处理：
+            //
+            // 情况一：
+            // <a onclick="location.href='http://localhost:8903/dom/static/iframe.html'"></a>
+            //
+            // 对以下情况处理不了：
+            //
+            // 情况一：
+            // <a onclick="location.href='http://'+'localhost:8903/dom/static/iframe.html'"></a>
+            //
+            // 情况二：
+            // <a id="hijack"></a>
+            // <script>
+            //     document.querySelector( '#hijack' ).onclick = function() {
+            //         location.href = 'http://localhost:8903/dom/static/iframe.html';
+            //     };
+            // </script>
+            //
+            // 还有更多的都处理不了。。。
+
+            var
+                d_r_url             = /http[s]*:\/\/[^\s'")]+/,
+                d_r_on_event        = /\son\S+/g,
+                d_tar_outerHtml     = n_tar.outerHTML.replace( /^<([^>]+)[\s\S]*$/, '$1' ),
+                d_tar_evt_match     = d_tar_outerHtml.match( d_r_on_event ) || [];
+            
+            for ( var i = d_tar_evt_match.length; i--; ) {
+                
+                var
+                    d_each_evt = d_tar_evt_match[ i ],
+                    d_each_url = d_each_evt.match( d_r_url ),
+                    d_each_url = d_each_url ? d_each_url[ 0 ] : '';
+                    
+                d_host = f_g_get_host( d_each_url );
+
+                if ( d_host && d_host !== d_g_cur_host ) {
+
+                    d_res_nuis.push( new M_NodeUrlInfo( n_tar, d_each_url, 'script' ) );
+
+                    break;
+                }
+            }
+
+        } )();
 
         return d_res_nuis;
     };
@@ -283,7 +344,7 @@ var HJD = ( function( white_list_config, defense_level, doc, win, undefined ) {
     
             var
                 n_tar       = n_tar_list[ i ],
-                d_nuis      = f_g_get_ele_nuis( n_tar, true ),
+                d_nuis      = f_g_get_ele_nuis( n_tar, true, true ),
                 d_back_nuis = f_g_check_nodeUrlInfos_in_white_list_host( d_nuis, d_g_white_list );
 
             d_back_nuis.length && n_no_pass_nanuis.push( new M_NodeAndNodeUrlInfos( n_tar, d_back_nuis ) );
@@ -336,11 +397,15 @@ var HJD = ( function( white_list_config, defense_level, doc, win, undefined ) {
 
         doc.body.appendChild( n_box );
 
-        n_box.getElementsByTagName( 'form' )[ 0 ].submit();
+        var
+            n_form      = n_box.getElementsByTagName( 'form' )[ 0 ],
+            n_iframe    = n_box.getElementsByTagName( 'iframe' )[ 0 ];
 
-        n_box.getElementsByTagName( 'iframe' )[ 0 ].onload = function() {
+        n_form.submit();
 
-            n_box.getElementsByTagName( 'iframe' )[ 0 ].src = 'about:blank';
+        n_iframe.onload = n_iframe.onerror = function() {
+
+            n_iframe.src = 'about:blank';
 
             n_box.parentNode.removeChild( n_box );
         };
@@ -398,10 +463,13 @@ var HJD = ( function( white_list_config, defense_level, doc, win, undefined ) {
     function f_g_check_all_and_deal_with_no_pass_nodes () {
 
         var d_g_bad_all = f_g_check_nodes_and_get_no_pass_nodes( '*' );
-        
-        f_g_report_nodeAndNodeUrlInfos( d_g_bad_all );
 
-        d_g_defense_level === 'strict' && f_g_release_nodeAndNodeUrlInfos( d_g_bad_all );
+        if ( d_g_defense_level !== 'none' ) {
+
+            f_g_report_nodeAndNodeUrlInfos( d_g_bad_all );
+            
+            d_g_defense_level === 'strict' && f_g_release_nodeAndNodeUrlInfos( d_g_bad_all );
+        }
     };
 
     /**
@@ -419,7 +487,7 @@ var HJD = ( function( white_list_config, defense_level, doc, win, undefined ) {
     {
         // '127.0.0.1:8903' : [ 'localhost:8903' ]
     }
-    // 防御级别，"strict"：上报并删除元素，默认 "report"：仅上报
+    // 防御级别。"strict"：上报并删除元素；默认 "report"：仅上报；"none": 不进行任何处理（一般在调试阶段使用）
     , 'strict'
     // 下面为其他外部变量
     , document
