@@ -137,7 +137,7 @@ var HJD = ( function( white_list_config, defense_level, doc, win, undefined ) {
      * 
      * @returns {M_NodeUrlInfo[]} 默认返回 []
      */
-    function f_g_get_ele_nuis ( node, includeEleCSS, includeEleEvent ) {
+    function f_g_create_nodeUrlInfos_for_node ( node, includeEleCSS, includeEleEvent ) {
 
         var
             n_tar       = node,
@@ -155,7 +155,6 @@ var HJD = ( function( white_list_config, defense_level, doc, win, undefined ) {
             case 'audio'    :
             case 'source'   :
             case 'embed'    :
-            case 'script'   :
                 ( d_host = f_g_get_host( n_tar.src ) )
                     && ( d_host !== d_g_cur_host )
                     && d_res_nuis.push( new M_NodeUrlInfo( n_tar, n_tar.src, 'src' ) );
@@ -194,7 +193,13 @@ var HJD = ( function( white_list_config, defense_level, doc, win, undefined ) {
                 break;
             
             // 来源属性为其内容
-            case 'style' :
+            case 'style'    :
+            case 'script'   :
+
+                d_tag_name === 'script'
+                    && ( d_host = f_g_get_host( n_tar.src ) )
+                    && ( d_host !== d_g_cur_host )
+                    && d_res_nuis.push( new M_NodeUrlInfo( n_tar, n_tar.src, 'src' ) );
 
                 var
                     d_style_con     = n_tar.textContent,
@@ -209,7 +214,7 @@ var HJD = ( function( white_list_config, defense_level, doc, win, undefined ) {
 
                     if ( d_host && d_host !== d_g_cur_host ) {
 
-                        d_res_nuis.push( new M_NodeUrlInfo( n_tar, d_each_url, 'style' ) );
+                        d_res_nuis.push( new M_NodeUrlInfo( n_tar, d_each_url, 'textContent' ) );
 
                         break;
                     }
@@ -278,15 +283,16 @@ var HJD = ( function( white_list_config, defense_level, doc, win, undefined ) {
             for ( var i = d_tar_evt_match.length; i--; ) {
                 
                 var
-                    d_each_evt = d_tar_evt_match[ i ],
-                    d_each_url = d_each_evt.match( d_r_url ),
-                    d_each_url = d_each_url ? d_each_url[ 0 ] : '';
+                    d_each_evt      = d_tar_evt_match[ i ],
+                    d_each_evt_name = d_each_evt.replace(/^\s([^=]+)=.*$/, '$1'),
+                    d_each_url      = d_each_evt.match( d_r_url ),
+                    d_each_url      = d_each_url ? d_each_url[ 0 ] : '';
                     
                 d_host = f_g_get_host( d_each_url );
 
                 if ( d_host && d_host !== d_g_cur_host ) {
 
-                    d_res_nuis.push( new M_NodeUrlInfo( n_tar, d_each_url, 'script' ) );
+                    d_res_nuis.push( new M_NodeUrlInfo( n_tar, d_each_url, d_each_evt_name ) );
 
                     break;
                 }
@@ -298,14 +304,14 @@ var HJD = ( function( white_list_config, defense_level, doc, win, undefined ) {
     };
 
     /**
-     * 检测列表组是否都在白名单 host 中
+     * 检测 M_NodeUrlInfo 实例列表是否都在白名单 host 中，返回没有在白名单中的 M_NodeUrlInfo 实例列表，默认返回空数组
      * 
      * @param {M_NodeUrlInfo[]} nodeUrlInfo_list    要检测的地址列表
      * @param {string[]}        white_list_host     白名单地址列表
      * 
      * @param {M_NodeUrlInfo[]} 默认返回 []。如果 nodeUrlInfo_list 为空，white_list_host 不为空，返回 []；如果 nodeUrlInfo_list 不为空，white_list_host 为空，返回 []。
      */
-    function f_g_check_nodeUrlInfos_in_white_list_host ( nodeUrlInfo_list, white_list_host ) {
+    function f_g_check_nodeUrlInfos_whether_in_white_list_host_and_get_no_pass_nodeUrlInfos ( nodeUrlInfo_list, white_list_host ) {
 
         if ( !nodeUrlInfo_list || !nodeUrlInfo_list.length || !white_list_host || !white_list_host.length ) {
 
@@ -330,22 +336,22 @@ var HJD = ( function( white_list_config, defense_level, doc, win, undefined ) {
     /**
      * 检测某类标签，返回没有通过的元素与元素地址信息集合
      * 
-     * @param {string} tag_name 某类元素的标签名
+     * @param {string} tag_name 某类元素的标签名，全匹配使用 "*"
      * 
      * @returns {M_NodeAndNodeUrlInfos[]} 元素与元素地址信息集合
      */
-    function f_g_check_nodes_and_get_no_pass_nodes ( tag_name ) {
+    function f_g_check_nodes_and_get_no_pass_nodeAndNodeUrlInfos_list ( tag_name ) {
 
         var
-            n_tar_list          = doc.querySelectorAll( tag_name ),
+            n_tar_list          = doc.querySelectorAll ? doc.querySelectorAll( tag_name ) : doc.getElementsByTagName( tag_name ),
             n_no_pass_nanuis    = [];
 
         for ( var i = n_tar_list.length; i--; ) {
     
             var
                 n_tar       = n_tar_list[ i ],
-                d_nuis      = f_g_get_ele_nuis( n_tar, true, true ),
-                d_back_nuis = f_g_check_nodeUrlInfos_in_white_list_host( d_nuis, d_g_white_list );
+                d_nuis      = f_g_create_nodeUrlInfos_for_node( n_tar, true, true ),
+                d_back_nuis = f_g_check_nodeUrlInfos_whether_in_white_list_host_and_get_no_pass_nodeUrlInfos( d_nuis, d_g_white_list );
 
             d_back_nuis.length && n_no_pass_nanuis.push( new M_NodeAndNodeUrlInfos( n_tar, d_back_nuis ) );
         }
@@ -356,9 +362,13 @@ var HJD = ( function( white_list_config, defense_level, doc, win, undefined ) {
     /**
      * 上报元素与元素地址信息集合中的元素（整合信息，上传到 /dom-report，数据结构随便想的，应与后端进一步确定）
      * 
+     * @todo 只是随便写的一个上报接口和结构，到正式使用时，需要进一步修改
+     * 
      * @param {M_NodeAndNodeUrlInfos[]} nanuis 要上报的标签列表
      */
     function f_g_report_nodeAndNodeUrlInfos ( nanuis ) {
+
+        // 根据 NodeAndNodeUrlInfos 实例列表，生成上报数据
 
         var d_report_list = []; // [ 'iframe:src=http://localhost:8903/xxoo', ... ]
 
@@ -374,7 +384,9 @@ var HJD = ( function( white_list_config, defense_level, doc, win, undefined ) {
             }
         }
 
-        var d_content = d_report_list.join( '|' );
+        var d_content = d_report_list.join( '|' ); // "iframe:src=http://localhost:8903/xxoo|img:src=http://localhost:8903/p,png|..."
+
+        // 下面使用 iframe + form 的方式，post 数据到指定接口
 
         var d_from = location.href;
 
@@ -404,6 +416,10 @@ var HJD = ( function( white_list_config, defense_level, doc, win, undefined ) {
         n_form.submit();
 
         n_iframe.onload = n_iframe.onerror = function() {
+
+            // 提交成功或失败都清空 iframe + form
+
+            n_iframe.onload = n_iframe.onerror = null;
 
             n_iframe.src = 'about:blank';
 
@@ -445,6 +461,7 @@ var HJD = ( function( white_list_config, defense_level, doc, win, undefined ) {
                     n_tar_parent = n_tar_parent.parentNode;
                     break;
                 
+                // 以下元素不进行释放（清除）处理
                 case 'html'     :
                 case 'body'     :
                 case 'head'     :
@@ -462,7 +479,7 @@ var HJD = ( function( white_list_config, defense_level, doc, win, undefined ) {
      */
     function f_g_check_all_and_deal_with_no_pass_nodes () {
 
-        var d_g_bad_all = f_g_check_nodes_and_get_no_pass_nodes( '*' );
+        var d_g_bad_all = f_g_check_nodes_and_get_no_pass_nodeAndNodeUrlInfos_list( '*' );
 
         if ( d_g_defense_level !== 'none' ) {
 
