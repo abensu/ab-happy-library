@@ -1,7 +1,8 @@
-let mod_restify = require( 'restify' );
-let mod_fs      = require( 'fs' );
-let mod_path    = require( 'path' );
-let mod_crypto  = require( 'crypto' );
+let mod_restify     = require( 'restify' );
+let mod_fs          = require( 'fs' );
+let mod_path        = require( 'path' );
+let mod_crypto      = require( 'crypto' );
+let mod_querystring = require( 'querystring' );
 
 
 // 服务器实例
@@ -261,8 +262,6 @@ d_server.get( '/csp-report-page/:type', ( request, response ) => {
 // [网页]页面重置 CSP
 d_server.get( '/csp-reset-csp-page/1', ( request, response ) => {
     
-    let d_type = request.params.type;
-    
     response.setHeader( 'Cache-Control', 'public, max-age=3600' );
     response.setHeader( 'Content-Type', 'text/html; charset=utf-8' );
     response.setHeader( 'Content-Security-Policy', `default-src 'self'` );
@@ -273,10 +272,31 @@ d_server.get( '/csp-reset-csp-page/1', ( request, response ) => {
 // [网页]页面重置 CSP
 d_server.get( '/csp-reset-csp-page/2', ( request, response ) => {
     
-    let d_type = request.params.type;
-    
     response.setHeader( 'Cache-Control', 'public, max-age=3600' );
     response.setHeader( 'Content-Type', 'text/html; charset=utf-8' );
 
     response.end( mod_fs.readFileSync( mod_path.resolve( __dirname, '0003-csp/case-reset-csp/index-2.html' ), 'utf8' ) );
+} );
+
+
+/**
+ * CRLF 示例
+ */
+d_server.get( '/crlf', ( request, response ) => {
+    
+    response.setHeader( 'Cache-Control', 'public, max-age=3600' );
+    response.setHeader( 'Content-Type', 'text/html; charset=utf-8' );
+
+    response.end( mod_fs.readFileSync( mod_path.resolve( __dirname, '0101-crlf/index.html' ), 'utf8' ) );
+} );
+
+d_server.get( '/crlf/mock-search', ( request, response ) => {
+
+    console.log( request.query.keyword );
+
+    response.send( 302, null, {
+        // Location : '/crlf'
+        Location : '/crlf?url=%0d%0a%0d%0a<img src=1 onerror=alert(/xss/)>'
+        // Location : '/crlf?url=\\r\\n\\r\\n<img src=1 onerror=alert(/xss/)>'
+    } );
 } );

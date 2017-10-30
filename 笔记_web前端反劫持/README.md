@@ -171,6 +171,11 @@ Github 启用 SRI 是为了减少托管在 CDN 的资源被篡改而引入 XSS �
 
 如果不想自己的页面被嵌入到第三方的 `frame` 中展示，请使用该头信息。
 
+## 拓展阅读
+
+* [8大前端安全问题（上）](http://www.jianshu.com/p/e6b7b097896e)
+
+* [8大前端安全问题（下）](http://www.jianshu.com/p/9edcda47a04a)
 
 ## 参考文章
 
