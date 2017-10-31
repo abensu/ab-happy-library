@@ -18,7 +18,7 @@
 
 ## 简例
 
-客户端
+客户端（随机 IP）
 
 ```
 let mod_dgram = require( 'dgram' );
@@ -36,7 +36,7 @@ d_client.on( 'message', ( msg, info ) => {
 } );
 ```
 
-服务端
+服务端（固定 IP）
 
 ```
 let mod_dgram = require( 'dgram' );
@@ -61,8 +61,6 @@ d_server.on( 'message', ( msg, info ) => {
 
 d_server.bind( 41234 );
 ```
-
-可以看出客户端和服务端，只区别在是否有绑定固定端口（客户端会随机分配一个端口），其他的调用都一致
 
 ## 参考文档
 
