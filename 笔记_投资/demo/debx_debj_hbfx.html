@@ -44,7 +44,7 @@
                  * 等额本息
                  *
                  * @param {number} ben_jin  本金
-                 * @param {number} li_xi    利息
+                 * @param {number} li_xi    年利息
                  * @param {number} yue_shu  月份数
                  *
                  * @returns {Object} 范式为 { raw: number, more: number, period: number[], total: number }
@@ -53,7 +53,7 @@
 
                     var d_compute_data = +( ben_jin * li_xi / 12 * Math.pow( ( 1 + li_xi / 12 ), yue_shu ) / ( Math.pow( ( 1 + li_xi / 12 ), yue_shu ) - 1 ) ).toFixed( 2 );
 
-                    var d_period_list = [];
+                    var d_period_list = [ -ben_jin ];
 
                     while ( d_period_list.length !== yue_shu ) {
 
@@ -76,7 +76,7 @@
                  * 等额本金
                  *
                  * @param {number} ben_jin  本金
-                 * @param {number} li_xi    利息
+                 * @param {number} li_xi    年利息
                  * @param {number} yue_shu  月份数
                  *
                  * @returns {Object} 范式为 { raw: number, more: number, period: number[], total: number }
@@ -87,7 +87,7 @@
 
                     var d_mei_yue_ben_jin = +( d_quan_bu_ben_jin / yue_shu ).toFixed( 2 );
 
-                    var d_period_list = [];
+                    var d_period_list = [ -ben_jin ];
 
                     var d_total = 0;
 
@@ -122,7 +122,7 @@
                  * 还本付息
                  *
                  * @param {number} ben_jin  本金
-                 * @param {number} li_xi    利息
+                 * @param {number} li_xi    年利息
                  * @param {number} yue_shu  月份数
                  *
                  * @returns {Object} 范式为 { raw: number, more: number, period: number[], total: number }
@@ -131,7 +131,7 @@
 
                     var d_mei_yue_li_xi = +( ben_jin * li_xi / 12 ).toFixed( 2 );
 
-                    var d_period_list = [];
+                    var d_period_list = [ -ben_jin ];
 
                     var d_total_li_xi = ben_jin * li_xi / 12 * yue_shu;
 
