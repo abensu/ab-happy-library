@@ -23,7 +23,9 @@ Location:
 
 * 过滤 `\r`、`\n` 之类的换行符，推测前端输入方，一般会发生在 textarea 区域
 
-* 使用新版浏览器，Chrome 61、Firefox 56、IE 7 均不会出现该注入
+* 使用新版浏览器，Chrome 61、Firefox 56、IE 7 均未发现（`%0d%0a%0d%0a<img src=1 onerror=alert(/xss/)>`无效）该注入
+
+* 不过发现如果服务器（`restify`）的 `Location` 信息含有 `\r` `\n` 会导致服务器 crash，需要对输入内容进行过滤
 
 ## 参考文章
 

@@ -292,11 +292,15 @@ d_server.get( '/crlf', ( request, response ) => {
 
 d_server.get( '/crlf/mock-search', ( request, response ) => {
 
-    console.log( request.query.keyword );
+    // console.log( request.query.keyword );
 
     response.send( 302, null, {
         // Location : '/crlf'
-        Location : '/crlf?url=%0d%0a%0d%0a<img src=1 onerror=alert(/xss/)>'
-        // Location : '/crlf?url=\\r\\n\\r\\n<img src=1 onerror=alert(/xss/)>'
+        Location : `/crlf?keyword=${request.query.keyword}` // 正常跳转且无注入
+        // Location : '/crlf?url=%0d%0a%0d%0a<img src=1 onerror=alert(/xss/)>' // 正常跳转且无注入
+        // Location : '/crlf?url=\\r\\n\\r\\n<img src=1 onerror=alert(/xss/)>' // 正常跳转且无注入
+        // Location : `/crlf?url=\r\n<img src=1 onerror=alert(/xss/)>` // 服务器报 504 错误
     } );
+
+    console.log( 'pass' );
 } );
