@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>test</title>
+</head>
+<body>
+    <script>
+        var ws = new WebSocket( 'ws://127.0.0.1:1337/ws' );
+
+        ws.addEventListener( 'open', function() {
+
+            console.log( '连通 ws 服务器' );
+
+            ws.send( 'hello server' );
+        } );
+
+        ws.addEventListener( 'message', function( evt ) {
+
+            console.log( 'server say :', evt.data );
+        } );
+
+        ws.addEventListener( 'close', function() {
+
+            console.log( 'server close' );
+        } );
+
+        ws.addEventListener( 'error', function( err ) {
+
+            console.log( 'server error :', err );
+        } );
+    </script>
+</body>
+</html>

@@ -18,6 +18,22 @@
 
 * `net`
 
+## WebSocket
+
+WebSocket 通讯依照 RFC6455 规范，主要是客户端对接收信息进行解码，和在发信息前进行编码要注意。
+
+[服务端](demo/socket/t1-server.js)、[客户端](demo/socket/t1-client.html)
+
+未完待续...
+
+* [细说WebSocket - Node篇](http://www.cnblogs.com/hustskyking/p/websocket-with-node.html)
+
+* [WebSocket帧数据 解码/转码](http://www.bubuko.com/infodetail-1607510.html)
+
+* [websocket 通信协议(已更新到version 13)](http://www.zendstudio.net/archives/websocket-protocol/)
+
+* [socket.io，理解socket.io](http://www.cnblogs.com/xiezhengcai/p/3957314.html)
+
 ## 参考文档
 
 * [学习 NodeJS 第八天：Socket 通讯](http://blog.csdn.net/zhangxin09/article/details/12844975)
