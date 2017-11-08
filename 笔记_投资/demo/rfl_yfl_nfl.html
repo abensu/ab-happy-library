@@ -4,24 +4,31 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>零存整取公式</title>
+    <title>复利公式</title>
 </head>
 <body>
     <section>
-        金额：<input id="money" type="number" value="500" />
+        金额：<input id="money" type="number" value="10000" />
         <br />
-        利息：<input id="percent" type="number" step="0.1" value="8" />%
+        利息：<input id="percent" type="number" step="0.1" value="5" />%
         <br />
-        期限：<input id="month" type="number" value="12">个月
+        时长：<input id="time" type="numer" value="1">
+        <br />
+        单位：
+        <select id="type">
+            <option value="day">日</option>
+            <option value="month">月</option>
+            <option value="year">年</option>
+        </select>
         <br />
         <button id="compute">计算</button>
         <br>
         <table style="width:100%">
             <tr>
-                <th>零存整取</th>
+                <th>复利</th>
             </tr>
             <tr>
-                <td><pre id="lczq"></pre></td>
+                <td><pre id="fl"></pre></td>
             </tr>
         </table>
     </section>
@@ -32,20 +39,22 @@
 
             var
                 n_money     = document.getElementById( 'money' ),
+                n_time      = document.getElementById( 'time' ),
                 n_percent   = document.getElementById( 'percent' ),
-                n_month     = document.getElementById( 'month' ),
+                n_type      = document.getElementById( 'type' ),
                 n_compute   = document.getElementById( 'compute' ),
-                n_lczq      = document.getElementById( 'lczq' );
+                n_fl        = document.getElementById( 'fl' );
 
             n_compute.addEventListener( 'click', function() {
 
                 var
                     d_ben_jin   = +n_money.value || 0,
                     d_li_xi     = +n_percent.value || 0,
-                    d_yue_shu   = ~~n_month.value || 0,
-                    d_lczq      = GongShi.ling_cun_zheng_qu( d_ben_jin, d_li_xi, d_yue_shu );
-
-                n_lczq.textContent = JSON.stringify( d_lczq, null, 2 );
+                    d_time      = ~~n_time.value || 0,
+                    d_type      = n_type.value,
+                    d_fl        = GongShi.fu_li( d_ben_jin, d_li_xi, d_time, d_type );
+                
+                n_fl.textContent = JSON.stringify( d_fl, null, 2 );
             } );
         } )();
     </script>

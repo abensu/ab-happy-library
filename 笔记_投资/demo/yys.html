@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>月月升公式</title>
+</head>
+<body>
+    <section>
+        金额：<input id="money" type="number" value="10000" />
+        <br />
+        第01个月利息：<input class="percents" type="number" step="0.1" value="6.4" />%
+        <br />
+        第02个月利息：<input class="percents" type="number" step="0.1" value="6.6" />%
+        <br />
+        第03个月利息：<input class="percents" type="number" step="0.1" value="6.8" />%
+        <br />
+        第04个月利息：<input class="percents" type="number" step="0.1" value="7" />%
+        <br />
+        第05个月利息：<input class="percents" type="number" step="0.1" value="7.2" />%
+        <br />
+        第06个月利息：<input class="percents" type="number" step="0.1" value="7.4" />%
+        <br />
+        第07个月利息：<input class="percents" type="number" step="0.1" value="7.6" />%
+        <br />
+        第08个月利息：<input class="percents" type="number" step="0.1" value="7.8" />%
+        <br />
+        第09个月利息：<input class="percents" type="number" step="0.1" value="8" />%
+        <br />
+        第10个月利息：<input class="percents" type="number" step="0.1" value="8.2" />%
+        <br />
+        第11个月利息：<input class="percents" type="number" step="0.1" value="8.4" />%
+        <br />
+        第12个月利息：<input class="percents" type="number" step="0.1" value="8.5" />%
+        <br />
+        期限：<input id="month" type="numer" value="12">个月
+        <br />
+        <button id="compute">计算</button>
+        <br>
+        <table style="width:100%">
+            <tr>
+                <th>月月升（无复利版，每月基数为本金）</th>
+                <th>月月升（复利版，每月基数为上月本息）</th>
+            </tr>
+            <tr>
+                <td><pre id="yys_wfl"></pre></td>
+                <td><pre id="yys_fl"></pre></td>
+            </tr>
+        </table>
+    </section>
+
+    <script src="gong_shi.js"></script>
+    <script>
+        ( function() {
+
+            var
+                n_money     = document.getElementById( 'money' ),
+                n_month     = document.getElementById( 'month' ),
+                n_compute   = document.getElementById( 'compute' ),
+                n_yys_wfl   = document.getElementById( 'yys_wfl' ),
+                n_yys_fl    = document.getElementById( 'yys_fl' );
+
+            n_compute.addEventListener( 'click', function() {
+
+                var
+                    d_ben_jin           = +n_money.value || 0,
+                    n_percents          = document.getElementsByClassName( 'percents' ),
+                    d_li_lv_lie_biao    = [],
+                    d_yue_shu           = ~~n_month.value || 0,
+                    d_yys_wfl           = null,
+                    d_yys_fl            = null;
+
+                for ( var i = 0, len = n_percents.length; i < len; i++ ) {
+
+                    d_li_lv_lie_biao.push( +n_percents[ i ].value || 0 );
+                }
+
+                d_yys_wfl = GongShi.yue_yue_sheng( d_ben_jin, d_li_lv_lie_biao, d_yue_shu );
+
+                d_yys_fl = GongShi.yue_yue_sheng( d_ben_jin, d_li_lv_lie_biao, d_yue_shu, true );
+
+                n_yys_wfl.textContent = JSON.stringify( d_yys_wfl, null, 2 );
+
+                n_yys_fl.textContent = JSON.stringify( d_yys_fl, null, 2 );
+            } );
+        } )();
+    </script>
+</body>
+</html>

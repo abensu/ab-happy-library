@@ -10,7 +10,7 @@
     <section>
         金额：<input id="money" type="number" value="10000" />
         <br />
-        利息：<input id="percent" type="number" value="8.2" />%
+        利息：<input id="percent" type="number" step="0.1" value="8.2" />%
         <br />
         期限：<input id="month" type="number" value="12">个月
         <br />
@@ -28,148 +28,36 @@
                 <td><pre id="hbfx"></pre></td>
             </tr>
         </table>
-        <script>
-            ( function() {
+    </section>
+
+    <script src="gong_shi.js"></script>
+    <script>
+        ( function() {
+
+            var
+                n_money     = document.getElementById( 'money' ),
+                n_percent   = document.getElementById( 'percent' ),
+                n_month     = document.getElementById( 'month' ),
+                n_compute   = document.getElementById( 'compute' ),
+                n_debx      = document.getElementById( 'debx' ),
+                n_debj      = document.getElementById( 'debj' ),
+                n_hbfx      = document.getElementById( 'hbfx' );
+            
+            n_compute.addEventListener( 'click', function() {
 
                 var
-                    n_money     = document.getElementById( 'money' ),
-                    n_percent   = document.getElementById( 'percent' ),
-                    n_month     = document.getElementById( 'month' ),
-                    n_compute   = document.getElementById( 'compute' ),
-                    n_debx      = document.getElementById( 'debx' ),
-                    n_debj      = document.getElementById( 'debj' ),
-                    n_hbfx      = document.getElementById( 'hbfx' );
-                
-                /**
-                 * 等额本息
-                 *
-                 * @param {number} ben_jin  本金
-                 * @param {number} li_xi    年利息
-                 * @param {number} yue_shu  月份数
-                 *
-                 * @returns {Object} 范式为 { raw: number, more: number, period: number[], total: number }
-                 */
-                function f_debx( ben_jin, li_xi, yue_shu ) {
+                    d_ben_jin   = +n_money.value || 0,
+                    d_li_lv     = +n_percent.value || 0,
+                    d_yue_shu   = +n_month.value || 0,
+                    d_debx      = GongShi.deng_e_ben_xi( d_ben_jin, d_li_lv, d_yue_shu ),
+                    d_debj      = GongShi.deng_e_ben_jin( d_ben_jin, d_li_lv, d_yue_shu ),
+                    d_hbfx      = GongShi.huan_ben_fu_xi( d_ben_jin, d_li_lv, d_yue_shu );
 
-                    var d_compute_data = +( ben_jin * li_xi / 12 * Math.pow( ( 1 + li_xi / 12 ), yue_shu ) / ( Math.pow( ( 1 + li_xi / 12 ), yue_shu ) - 1 ) ).toFixed( 2 );
-
-                    var d_period_list = [ -ben_jin ];
-
-                    while ( d_period_list.length !== yue_shu ) {
-
-                        d_period_list.push( d_compute_data );
-                    }
-
-                    var d_total = +( d_compute_data * yue_shu ).toFixed( 2 );
-
-                    var d_total_li_xi = +( d_total - ben_jin ).toFixed( 2 );
-
-                    return {
-                        total   : d_total,
-                        more    : d_total_li_xi,
-                        raw     : ben_jin,
-                        period  : d_period_list
-                    };
-                };
-
-                /**
-                 * 等额本金
-                 *
-                 * @param {number} ben_jin  本金
-                 * @param {number} li_xi    年利息
-                 * @param {number} yue_shu  月份数
-                 *
-                 * @returns {Object} 范式为 { raw: number, more: number, period: number[], total: number }
-                 */
-                function f_debj( ben_jin, li_xi, yue_shu ) {
-
-                    var d_quan_bu_ben_jin = ben_jin;
-
-                    var d_mei_yue_ben_jin = +( d_quan_bu_ben_jin / yue_shu ).toFixed( 2 );
-
-                    var d_period_list = [ -ben_jin ];
-
-                    var d_total = 0;
-
-                    while ( d_period_list.length !== yue_shu ) {
-
-                        var d_mei_yue_li_xi = +( d_quan_bu_ben_jin * li_xi / 12 ).toFixed( 2 );
-
-                        var d_mei_yue_huan_kuan = +( d_mei_yue_ben_jin + d_mei_yue_li_xi ).toFixed( 2 );
-
-                        d_period_list.push( d_mei_yue_huan_kuan );
-
-                        d_total += d_mei_yue_huan_kuan;
-
-                        d_quan_bu_ben_jin -= d_mei_yue_ben_jin;
-                    }
-
-                    d_total = +( d_total.toFixed( 2 ) );
-
-                    var d_total_li_xi = d_total - ben_jin;
-
-                    d_total_li_xi = +( d_total_li_xi.toFixed( 2 ) );
-
-                    return {
-                        total   : d_total,
-                        more    : d_total_li_xi,
-                        raw     : ben_jin,
-                        period  : d_period_list
-                    };
-                };
-
-                /**
-                 * 还本付息
-                 *
-                 * @param {number} ben_jin  本金
-                 * @param {number} li_xi    年利息
-                 * @param {number} yue_shu  月份数
-                 *
-                 * @returns {Object} 范式为 { raw: number, more: number, period: number[], total: number }
-                 */
-                function f_hbfx( ben_jin, li_xi, yue_shu ) {
-
-                    var d_mei_yue_li_xi = +( ben_jin * li_xi / 12 ).toFixed( 2 );
-
-                    var d_period_list = [ -ben_jin ];
-
-                    var d_total_li_xi = ben_jin * li_xi / 12 * yue_shu;
-
-                    while ( d_period_list.length !== yue_shu ) {
-
-                        d_period_list.push( d_mei_yue_li_xi );
-                    }
-
-                    d_total_li_xi = +( d_total_li_xi.toFixed( 2 ) );
-
-                    d_period_list[ d_period_list.length - 1 ] = +( ben_jin + d_total_li_xi - d_mei_yue_li_xi * ( yue_shu - 1 ) ).toFixed( 2 );
-
-                    d_total = +( ben_jin + d_total_li_xi ).toFixed( 2 );
-
-                    return {
-                        total   : d_total,
-                        more    : d_total_li_xi,
-                        raw     : ben_jin,
-                        period  : d_period_list
-                    };
-                };
-
-                n_compute.addEventListener( 'click', function() {
-
-                    var
-                        d_ben_jin   = +n_money.value || 0,
-                        d_li_xi     = +n_percent.value ? +n_percent.value / 100 : 0,
-                        d_yue_shu   = +n_month.value ? ~~n_month.value : 0,
-                        d_debx      = f_debx( d_ben_jin, d_li_xi, d_yue_shu ),
-                        d_debj      = f_debj( d_ben_jin, d_li_xi, d_yue_shu ),
-                        d_hbfx      = f_hbfx( d_ben_jin, d_li_xi, d_yue_shu );
-
-                    n_debx.textContent = JSON.stringify( d_debx, null, 2 );
-                    n_debj.textContent = JSON.stringify( d_debj, null, 2 );
-                    n_hbfx.textContent = JSON.stringify( d_hbfx, null, 2 );
-                } );
-            } )();
-        </script>
-    </section>
+                n_debx.textContent = JSON.stringify( d_debx, null, 2 );
+                n_debj.textContent = JSON.stringify( d_debj, null, 2 );
+                n_hbfx.textContent = JSON.stringify( d_hbfx, null, 2 );
+            } );
+        } )();
+    </script>
 </body>
 </html>
