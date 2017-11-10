@@ -118,7 +118,7 @@
 
 《[跨站的艺术-XSS入门与介绍](http://www.fooying.com/the-art-of-xss-1-introduction/)》一文介绍了现行多种的 XSS 类型，如：
 
-* mXSS（突变型XSS，因二次解码导致 XSS）
+* mXSS（突变型 XSS，因二次解码导致 XSS）
 
 * Flash XSS（非劫持的情况下，发生在对 url 参数上的处理，与反射性 XSS 类似）
 
