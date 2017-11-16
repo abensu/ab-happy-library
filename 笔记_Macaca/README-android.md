@@ -47,7 +47,7 @@
 
 * 如果 `macaca-android` 安装不成功，那之后想 `npm i app-inspector -g` 也不会成功，基本上因为编译不成功导致的 “不完全成功”
 
-* 执行完 `app-inspector -u 91QECPN6DEFE` 后，切换 app 界面，浏览器刷新才能看到最新的界面
+* 执行完 `app-inspector -u 91QXXXXXXEFE` 后，切换 app 界面，浏览器刷新才能看到最新的界面
 
 ## Macaca 的架构图
 
@@ -77,7 +77,7 @@ npm 安装的 `macaca-cli` 大概对应的是 `Macaca Server` 的 Router 部分�
 
     let desiredCaps = {
         platformName: 'android',
-        // udid : '91QECPN6DEFE', // 真机对应的设备 ID，通过 "adb devices" 命令查看
+        // udid : '91QXXXXXXEFE', // 真机对应的设备 ID，通过 "adb devices" 命令查看
         app : 'https://npmcdn.com/android-app-bootstrap@latest/android_app_bootstrap/build/outputs/apk/android_app_bootstrap-debug.apk',
         reuse : 3, // 在测试结束后保持 app 状态
         autoAcceptAlerts : true, // 自动接受所有的系统弹窗信息
@@ -107,3 +107,44 @@ npm 安装的 `macaca-cli` 大概对应的是 `Macaca Server` 的 Router 部分�
 * `macaca run` 会用 `mocha` 的环境去运行测试用例，所以 `describe`、`it`、`before`、`after` 等是全局函数，更多请看[官网](http://mochajs.org/)或[《测试框架 Mocha 实例教程》](http://www.ruanyifeng.com/blog/2015/12/a-mocha-tutorial-of-examples.html)
 
 ## 第二个测试用例
+
+```
+let wd = require( 'macaca-wd' );
+
+let driver = wd.promiseChainRemote( {
+    host : 'localhost',
+    port : 3456,
+} );
+
+let desiredCaps = {
+    platformName: 'android',
+    // udid : '91QXXXXXXEFE', // 真机需要对应的设备 ID
+    app : 'https://npmcdn.com/android-app-bootstrap@latest/android_app_bootstrap/build/outputs/apk/android_app_bootstrap-debug.apk',
+}
+
+describe( '简答测试', function() {
+
+    it( '随便', function( done ) {
+
+        this.timeout( 50 * 1000 );
+
+        return driver
+            .init( desiredCaps )
+            .sleep( 10 * 1000 )
+            .waitForElementsByClassName( 'android.widget.EditText' )
+            .then( ( eles ) => {
+                return eles[ 0 ];
+            } )
+            .sendKeys( '123' )
+            .sleep( 1000 )
+            .then( done )
+            ;
+    } );
+} );
+```
+
+## 真机测试 Fail，模拟器测试 Success！
+
+魅族 pro6 （系统貌似是 Android 6.0）真机测试会报 `Process crashed`、`Calling from not trusted UID!` 错误，类似[这个错误](https://github.com/alibaba/macaca/issues/731)，暂未找到解决办法。
+
+模拟器（AVD 的 Android 6.0，API 23）可以执行上面的测试用例，还有[官方示例的前大部分](https://github.com/macaca-sample/sample-nodejs/blob/master/macaca-test/mobile-app-sample.test.js)。
