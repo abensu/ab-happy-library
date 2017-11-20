@@ -52,7 +52,7 @@
 
 * 前后端对文本的不作为
 
-* 更趋于后端防御
+* 更趋于后端防御（`localStorage` 引起的 XSS 也要注意）
 
 场景：
 
@@ -68,11 +68,9 @@
 
 ### Dom XSS（DOM-base XSS，文档对象模型 XSS）
 
-> 数据（页面、引用资源等）劫持导致的 XSS，一般是对文档进行修改
+> 对 DOM 结构进行慕改，引起的 XSS。包括，数据（页面、引用资源等）被劫持而注入的脚本、反射型 XSS 和 存储型 XSS 注入的脚本等。
 
 关键点：
-
-* 劫持
 
 * DOM 的慕改
 
@@ -126,7 +124,7 @@
 
 * MHTML XSS（低版本 IE 专属，mhtml 协议加载问题资源）
 
-* CSS XSS（低版本 IE 专属，css 中通过 expression(...) 调用 js）
+* CSS XSS（低版本 IE 专属，css 中通过 `expression(...)` 调用 js）
 
 * VBScript XSS（低版本 IE 专属）
 
