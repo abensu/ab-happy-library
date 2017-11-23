@@ -6,7 +6,7 @@
 
 流程大概如下：
 
-进行 30x 跳转到 `http://127.0.0.1:8903/crlf?abc=123%0d%0a%0d%0a%3Cimg%20src=0%20onerror=alert(123)%3E`，组成头部信息如下
+进行 30x 跳转到 `http://127.0.0.1:8903/crlf?url=http%3A%2F%2Fbaidu.com%0d%0a%0d%0a%3Cimg%20src=0%20onerror=alert(123)%3E`，组成头部信息如下
 
 ```
 HTTP/1.1 302 Moved Temporarily 
@@ -14,7 +14,7 @@ Date: Fri, 27 Jun 2014 17:52:17 GMT
 Content-Type: text/html 
 Content-Length: 154 
 Connection: close 
-Location:
+Location: http://baidu.com
 
 <img src=0 onerror=alert(123)>
 ```

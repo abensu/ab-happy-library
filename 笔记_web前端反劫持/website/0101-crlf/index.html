@@ -9,11 +9,21 @@
 <body>
     <h1>我是一个页面</h1>
     <form action="/crlf/mock-search">
-        <!-- <input type="text" name="key" value="搜索内容%0d%0a%0d%0a<img src=0 onerror=alert(123)>"> -->
-        <textarea name="keyword" id="keyword" cols="30" rows="10">搜索内容
 
-<img src=0 onerror=alert(123)></textarea>
-        <button>提交</button>
+        <!-- encodeURIComponent('http://127.0.0.1:8903/crlf?\r\n\r\n<script>alert(1)</script>') -->
+        <input name="url" id="url" value="http%3A%2F%2F127.0.0.1%3A8903%2Fcrlf%3F%0D%0A%0D%0A%3Cscript%3Ealert(1)%3C%2Fscript%3E">
+        
+        <!-- encodeURIComponent('http://127.0.0.1:8903/crlf?\r\n\r\n') -->
+        <!-- <input name="url" id="url" value="http%3A%2F%2F127.0.0.1%3A8903%2Fcrlf%3F%0D%0A%0D%0A"> -->
+
+        <!-- encodeURIComponent('http://127.0.0.1:8903/crlf?\n') -->
+        <!-- <input name="url" id="url" value="http%3A%2F%2F127.0.0.1%3A8903%2Fcrlf%3F%0A"> -->
+
+        <!-- encodeURIComponent('\r\n\r\n') -->
+        <!-- encodeURIComponent('http://127.0.0.1:8903/crlf?%0D%0A%0D%0A') -->
+        <!-- <input name="url" id="url" value="http%3A%2F%2F127.0.0.1%3A8903%2Fcrlf%3F%250D%250A%250D%250A"> -->
+
+        <button>提交并跳转</button>
     </form>
 </body>
 </html>
