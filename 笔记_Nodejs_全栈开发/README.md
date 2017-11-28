@@ -4,6 +4,8 @@
 
 * nodejs api
 
+    * [Node.js 中文网](http://nodejs.cn/)：提供中文 api 解释
+
 * 数据库（硬盘型、内存型）
 
 * 常用框架
