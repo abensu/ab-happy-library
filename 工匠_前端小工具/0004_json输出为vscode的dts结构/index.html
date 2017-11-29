@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>json 转换为 .d.ts 数据结构体</title>
+    <style>
+        html, body {height: 100%;}
+        * {padding: 0;margin: 0;box-sizing: border-box;}
+        #input, #output {position: absolute;top: 0;height: 100%;width: 50%;border: none 0;}
+        #input {left: 0;resize: none;}
+        #output {right: 0;background: #eee;}
+    </style>
+</head>
+<body>
+    <textarea id="input" placeholder="填入 json 数据">
+        [{
+            "str" : "str",
+            "str_arr" : [ "1", "2" ],
+            "num" : 2,
+            "num_arr" : [ 1, 2 ],
+            "bool" : true,
+            "bool_arr" : [ true, false ],
+            "obj" : {
+                "key1" : "str",
+                "key2" : 3
+            },
+            "obj_list" : [
+                {
+                    "name" : "bb",
+                    "age" : 12,
+                    "male" : false
+                },
+                {
+                    "name" : "cc",
+                    "age" : 56,
+                    "male" : true
+                }
+            ],
+        }]
+    </textarea>
+    <textarea id="output" placeholder="输出 .d.ts 结构体"></textarea>
+    <script src="index.js"></script>
+</body>
+</html>
