@@ -1,0 +1,15 @@
+{
+    "name": "nodejs-api",
+    "version": "1.0.0",
+    "description": "demo for api",
+    "main": "index.js",
+    "scripts": {
+      "fs.watch": "cd fs.watch && node index",
+      "fs.file-type": "cd fs.file-type && node index"
+    },
+    "keywords": [
+      "demo"
+    ],
+    "author": "abensu",
+    "license": "ISC"
+  }
