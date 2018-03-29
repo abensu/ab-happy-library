@@ -1,0 +1,40 @@
+/**
+ * 重置
+**/
+* {padding: 0;margin: 0;box-sizing: border-box;}
+html, body, .mod-app {height: 100%;}
+body {font-size: 12px;}
+table {font-size: 14px;}
+table td, table th {border-spacing: 3px;background: cadetblue;color: #fff;padding: 5px 10px;}
+
+
+/**
+ * 操作区域
+**/
+.mod-opt-field {height: 10%;position: relative;}
+.mod-opt-field .drag-box {width: 180px;height: 100%;background: gray;overflow: hidden;float: left;text-align: center;position: relative;}
+.mod-opt-field .drag-box .name {color: #fff;font-size: 12px;}
+.mod-opt-field .drag-box .input-file {font-size: 100em;opacity: 0;position: absolute;left: 0;cursor: pointer;}
+.mod-opt-field .file-info {padding: 10px;overflow: hidden;height: 100%;}
+
+
+/**
+ * 源 JSON 输出
+**/
+.mod-raw-json-field,
+.mod-output-table-field,
+.mod-output-json-field
+    {float: left;width: 50%;overflow: auto;}
+.mod-raw-json-field {height: 90%;background: #ddd;}
+.mod-output-table-field {height: 45%;background: #ccc;}
+.mod-output-json-field {height: 45%;background: #eee;}
+
+
+
+/**
+ * 元素
+**/
+.g-ele-icon,
+.g-ele-middle
+    {display: inline-block;vertical-align: middle;}
+.g-ele-middle {height: 100%;}

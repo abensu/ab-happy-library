@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>XLSX</title>
+    <link rel="stylesheet" href="styles/index.css" />
+</head>
+<body>
+    <div class="mod-app">
+        <!-- 拖动、点击等获取文件信息 -->
+        <div class="mod-opt-field">
+            <div id="mod-my-drag" class="drag-box">
+                <span class="name g-ele-icon">拖动单个文件到此<br />或<br />点击上传单个文件</span><i class="g-ele-middle"></i>
+                <input type="file" id="mod-file-field" class="input-file" />
+            </div>
+            <p class="file-info">文件信息：<span id="mod-file-info-show">--</span></p>
+        </div>
+        <!-- 源 JSON 输出 -->
+        <pre id="mod-raw-json-field" class="mod-raw-json-field"></pre>
+        <!-- 转化后输出的 table -->
+        <div id="mod-output-table-field" class="mod-output-table-field"></div>
+        <!-- 转化后输出的 JSON -->
+        <pre class="mod-output-json-field"></pre>
+    </div>
+    
+    <!-- <input type="file" id="xlsx-file" />
+    <pre id="output-json" style="background: #efefef;"></pre>
+    <div class="output-table"></div> -->
+
+    <script type="text/html" id="tmpl-for-mod-output-table-field">
+        <% for ( var key in data ) { %>
+            <h2>表格：<%= key %></h2>
+            <%= data[ key ] %>
+        <% } %>
+    </script>
+
+    <script src="libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="libs/lodash/4.17.5/lodash.min.js"></script>
+    <script src="libs/xlsx/0.12.6/xlsx.full.min.js"></script>
+    <script src="scripts/index.js"></script>
+</body>
+</html>
