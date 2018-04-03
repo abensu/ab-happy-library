@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        * {padding: 0;margin: 0;box-sizing: border-box;}
+        html, body {height: 100%;}
+        #input, #output {width: 50%;height: 100%;}
+    </style>
+</head>
+<body>
+    <textarea id="input" cols="30" rows="10"></textarea><textarea id="output" cols="30" rows="10"></textarea>
+
+    <script>
+        var
+            n_input = document.getElementById( 'input' ),
+            n_output = document.getElementById( 'output' );
+
+        n_input.addEventListener( 'input', function () {
+
+            n_output.value
+                = n_input.value
+                    .replace( /<!--[\s\S]+?-->/g, '' ) // 去掉注释
+                    .replace( /"/g, '\\"' ) // 双引号转义
+                    .replace( /'/g, "\\'" ) // 单引号转义
+                    .replace( /\//g, '\\/' ) // 左斜杠转义
+                    .replace( /\s+/g, ' ' ) // 多个空格转为单个空格
+                ;
+
+            n_output.value = 'document.write("' + n_output.value.trim() + '");'
+
+        }, false );
+    </script>
+</body>
+</html>
