@@ -2,7 +2,9 @@
 
 ## 场景
 
-OPPO R9M 手机上，在酷狗唱模块的 `webview` 打开 `http://acsing.kugou.com/sing7/vue/dist/downktv/index.html`，触控（拖动、点击等）屏幕、`setTimeout`、`setInterval`、`animation css` 等都会引起 `webview` 中部分或全部图片（`img` 标签、`background-image css`）闪烁。
+OPPO R9M 手机上，在酷狗唱模块的 `webview` 打开 `http://acsing.kugou.com/sing7/vue/dist/downktv/index.html` 时。
+
+第一次打开没有问题，退出页面，再进入页面，页面会开始闪烁，触控（拖动、点击等）屏幕、`setTimeout`、`setInterval`、`animation css` 等都会引起 `webview` 中部分或全部图片（`img` 标签、`background-image css`）闪烁。
 
 ## 过程
 
