@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<e:Skin class="MyBabySkin" width="200" height="200" xmlns:e="http://ns.egret.com/eui" xmlns:w="http://ns.egret.com/wing" >
+	<w:Config id="1650deaef28" ></w:Config>
+	<e:Image width="200" height="200" x="0" y="0" source="mybaby_header_png" scale9Grid="4,4,8,8"/>
+	<e:Label id="mytext" text="Label" horizontalCenter="0" verticalCenter="0" textAlign="left"/>
+</e:Skin>
