@@ -8,11 +8,11 @@
 </head>
 <body>
     <section>
-        金额：<input id="money" type="number" value="10000" />
+        金额：<input id="money" type="number" value="1000000" />
         <br />
-        利息：<input id="percent" type="number" step="0.1" value="8.2" />%
+        利息：<input id="percent" type="number" step="0.1" value="4.9" />%
         <br />
-        期限：<input id="month" type="number" value="12">个月
+        期限：<input id="month" type="number" value="360">个月
         <br />
         <button id="compute">计算</button>
         <br>
@@ -32,7 +32,7 @@
 
     <script src="gong_shi.js"></script>
     <script>
-        ( function() {
+        ( function () {
 
             var
                 n_money     = document.getElementById( 'money' ),
@@ -52,6 +52,15 @@
                     d_debx      = GongShi.deng_e_ben_xi( d_ben_jin, d_li_lv, d_yue_shu ),
                     d_debj      = GongShi.deng_e_ben_jin( d_ben_jin, d_li_lv, d_yue_shu ),
                     d_hbfx      = GongShi.huan_ben_fu_xi( d_ben_jin, d_li_lv, d_yue_shu );
+
+                // 标出每一年的位置
+                function f_mark_year ( data, index ) {
+                    return index % 12 === 0 && index / 12 ? ( data + '>> 第' + index / 12 + '年' ) : data;
+                };
+
+                d_debx.period = d_debx.period.map( f_mark_year );
+                d_debj.period = d_debj.period.map( f_mark_year );
+                d_hbfx.period = d_hbfx.period.map( f_mark_year );
 
                 n_debx.textContent = JSON.stringify( d_debx, null, 2 );
                 n_debj.textContent = JSON.stringify( d_debj, null, 2 );
