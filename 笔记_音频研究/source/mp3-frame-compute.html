@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>计算 frame 的数据</title>
+</head>
+<body>
+    <label for="frame_header_input">计算帧头</label>
+    <input type="text" id="frame_header_input" placeholder="如“FF FB 90 00”或“FFFB9000”">
+    <pre id="frame_header_output"></pre>
+
+    <script>
+        let
+            n_frame_header_input    = document.querySelector( '#frame_header_input' ),
+            n_frame_header_output   = document.querySelector( '#frame_header_output' );
+
+        // 绑定 enter 键
+        n_frame_header_input.addEventListener( 'keypress', function ( evt ) {
+
+            evt.keyCode === 13 && f_compute_frame_header( evt.target.value.trim().replace( /\s+/g, '' ) );
+
+        }, false );
+
+        /**
+         * 计算帧头数据
+         * 
+         * @params {string} buf_str 十六进制的字符串
+         */
+        function f_compute_frame_header ( buf_str ) {
+
+            let d_is_match = /^[0-9a-fA-F]{8}$/.test( buf_str );
+
+            if ( !d_is_match ) return f_output_frame_header( '格式错误[e001]\n> 请输入四位十六进制的数据\n> 例如 “FF FB 90 00” 或 “FFFB9000”' );
+
+            let
+                d_16 = parseInt( buf_str, 16 ),
+                d_json = {
+                    sync                : undefined,
+                    version             : 0,
+                    layer               : 0,
+                    CRC                 : 0,
+                    bit                 : 0,
+                    sample              : 0,
+                    padding             : 0,
+                    extension           : undefined,
+                    channel_mode        : 0,
+                    mode_extension      : 0,
+                    copyright           : 0,
+                    original            : 0,
+                    emphasis            : 0,
+                };
+
+            d_json.version = ( d_16 >>> 19 ) & 1 === 1 ? 1 : ( d_16 >>> 20 ) & 1 === 1 ? 2 : 2.5;
+
+            d_json.layer = 4 - ( d_16 >>> 17 ) & parseInt( '11', 2 ); // 取移位后的最后 2 位
+
+            d_json.CRC = ( d_16 >>> 16 ) & 1 === 1 ? 'Y' : 'N';
+
+            d_json.bit = ( () => {
+                switch ( ( d_16 >>> 6 ) & parseInt( '11', 2 ) ) { // 取移位后的最后 2 位
+                    case parseInt( '00' ) :
+                        return 'stereo，立体声Stereo';
+                    case parseInt( '01' ) :
+                        return 'join stereo，联合立体声';
+                    case parseInt( '10' ) :
+                        return 'dual channel，双通道';
+                    case parseInt( '11' ) :
+                        return 'single channel，单通道';
+                }
+            } )();
+
+            d_json.padding = ( d_16 >>> 9 ) & 1;
+
+            d_json.channel_mode = ( () => {
+                switch ( ( d_16 >>> 6 ) & parseInt( '11', 2 ) ) { // 取移位后的最后 2 位
+                    case parseInt( '00' ) :
+                        return 'stereo，立体声Stereo';
+                    case parseInt( '01' ) :
+                        return 'join stereo，联合立体声';
+                    case parseInt( '10' ) :
+                        return 'dual channel，双通道';
+                    case parseInt( '11' ) :
+                        return 'single channel，单通道';
+                }
+            } )();
+
+            d_json.mode_extension = ( () => {
+                switch ( ( d_16 >>> 4 ) & parseInt( '11', 2 ) ) { // 取移位后的最后 2 位
+                    case parseInt( '00' ) :
+                        return 'MPG_MD_LR_LR';
+                    case parseInt( '01' ) :
+                        return 'MPG_MD_LR_I';
+                    case parseInt( '10' ) :
+                        return 'MPG_MD_MS_LR';
+                    case parseInt( '11' ) :
+                        return 'MPG_MD_MS_I';
+                }
+            } )();
+
+            d_json.copyright = ( d_16 >>> 3 ) & 1 === 1 ? 'Y' : 'N';
+
+            d_json.original = ( d_16 >>> 2 ) & 1 === 1 ? 'Y' : 'N';
+
+            d_json.emphasis = ( () => {
+                switch ( d_16 & parseInt( '11', 2 ) ) { // 取移位后的最后 2 位
+                    case parseInt( '00' ) :
+                        return 'none';
+                    case parseInt( '01' ) :
+                        return '50/15 microsecs';
+                    case parseInt( '10' ) :
+                        return 'reserved';
+                    case parseInt( '11' ) :
+                        return 'CCITT J 17';
+                }
+            } )();
+
+            f_output_frame_header( JSON.stringify( d_json, null, 4 ) );
+        };
+
+        /**
+         * 输出内容
+         * 
+         * @params {string} str 需要输出的字符串
+         */
+        function f_output_frame_header ( str ) {
+
+            n_frame_header_output.textContent = str;
+        };
+    </script>
+</body>
+</html>
