@@ -212,6 +212,8 @@ Layer 2、3 的帧长度计算公式：
 > * 单位为字节 byte
 > * 417 字节，包含头信息（4 字节）与数据信息（413 字节）
 
+链接：[计算 frame 的数据](./source/mp3-frame-compute.html)
+
 ### Frame、音频（数据信息）
 
 ![数据](./source/1004.png)
