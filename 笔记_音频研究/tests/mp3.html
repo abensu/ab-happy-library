@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>计算 frame 的数据</title>
+</head>
+<body>
+    <label for="id3v2_header_input">ID3V2头</label>
+    <input type="text" id="id3v2_header_input" value="49 44 33 03 00 00 00 00 01 25" placeholder="如“49 44 33 03 00 00 00 00 01 25”或“49443303000000000125”">
+    <pre id="id3v2_header_output"></pre>
+
+    <hr>
+
+    <label for="frame_header_input">计算帧头</label>
+    <input type="text" id="frame_header_input" value="FF FB 90 00" placeholder="如“FF FB 90 00”或“FFFB9000”">
+    <pre id="frame_header_output"></pre>
+
+    <script src="./scripts/mp3.js"></script>
+    <script>
+        /**
+         * 输出内容
+         * 
+         * @params {any} data 需要输出的数据
+         */
+         function g_f_output ( data, node ) {
+
+            node.textContent = data instanceof Error ? data.message : JSON.stringify( data, null, 4 );
+        };
+    </script>
+    <script>
+        /** 定义全局 mp3 对象 */
+        const g_d_mp3 = new MP3();
+
+        /**************************************
+         * 计算ID3V2头数据
+         *************************************/
+        document.querySelector( '#id3v2_header_input' ).addEventListener( 'keypress', function ( evt ) {
+
+            if ( evt.keyCode === 13 ) {
+
+                let d_val = evt.target.value.trim().replace( /\s+/g, '' );
+
+                let d_out = g_d_mp3.compute_ID3V2_header( d_val );
+
+                g_f_output( d_out, document.querySelector( '#id3v2_header_output' ) );
+            };
+
+        }, false );
+
+        /**************************************
+         * 计算帧头数据
+         *************************************/
+        document.querySelector( '#frame_header_input' ).addEventListener( 'keypress', function ( evt ) {
+
+            if ( evt.keyCode === 13 ) {
+
+                let d_val = evt.target.value.trim().replace( /\s+/g, '' );
+
+                let d_out = g_d_mp3.compute_Frame_header( d_val );
+
+                g_f_output( d_out, document.querySelector( '#frame_header_output' ) );
+            };
+
+        }, false );
+    </script>
+</body>
+</html>
