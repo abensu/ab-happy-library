@@ -1,0 +1,16 @@
+{
+  "name": "project-typescript",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "node_modules/.bin/parcel src/index.html -d ./dist",
+    "build": "node_modules/.bin/parcel build src/index.html -d ./dist --no-source-maps"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "parcel": "^1.12.3"
+  }
+}
