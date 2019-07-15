@@ -1,0 +1,73 @@
+# 短信中的 URL 启动 APP
+
+> 严选短信中的 `u.163.com`，点击可以启动网易严选 APP
+
+假设想通过 `http://acsing.kugou.com/app` 启动 APP...
+
+1. Android scheme 设置（以下是假设性代码）：
+
+    ```
+    <activity
+        android:name=".SchemeTargetActivity"
+        android:launchMode="singleTask">
+        <!-- 要想在别的App上能成功调起App，必须添加intent过滤器 -->
+        <intent-filter>
+            <!-- 协议部分 可以随便设置 还可以加一些host port path 等，协议规则越详细定位界面更精确，-->
+            <!--<data android:scheme="bruce"></data>-->
+
+            <data android:scheme="http"
+                android:host="acsing.kugou.com"
+                android:port="80"
+                android:path="/app"
+                ></data>
+            <!-- 必须设置 -->
+            <action android:name="android.intent.action.VIEW" />
+            <category android:name="android.intent.category.DEFAULT" />
+            <!-- 如果需要外部网页打开本页面，还需要设置这个 -->
+            <category android:name="android.intent.category.BROWSABLE" />
+        </intent-filter>
+    </activity>
+    ```
+
+1. iOS scheme 设置（以下是假设性代码）：
+
+    ```
+    - (IBAction)jumpToPageOne:(id)sender {
+        NSString *urlString = @"http://acsing.kugou.com/app";
+        NSURL *url = [NSURL URLWithString:urlString];
+        if ([[UIApplication sharedApplication] canOpenURL:url]) {
+            [[UIApplication sharedApplication] openURL:url options:@{} completionHandler:^(BOOL success) {
+                
+            }];
+        }
+        else {
+            [self showMessage:@"没有该应用"];
+        }
+    }
+    ```
+
+1. 后端添加跳转：
+
+    * 对 `http://acsing.kugou.com/app`（或 `http://acsing.kugou.com/app/xxx` 等）进行 30X 的跳转设置（避免因 APP 没有安装，页面报 404），跳转到下载页（`http://acsing.kugou.com/sing7/static/staticPub/mobile/download/views/v2.html`）或者是下一个业务的跳转
+
+1. web 前端对下载页的接收参数进行统一处理
+
+注意点：
+
+1. 考虑到需要在**短信**进行传播，地址（即上例的 `http://acsing.kugou.com/app`）不应过长
+
+1. 短信中的地址无需添加 `http://`（如短信上是 `acsing.kugou.com/app`，系统会补全为 `http://acsing.kugou.com/app`），但如果是 `https：//`，估计需要加上
+
+1. 地址（即 `http://acsing.kugou.com/app`）不应与现有接口、静态地址、动态地址重合，以免在日后业务中出现问题
+
+1. 上述地址，在思路上，暂支持启动 APP，至于跳到对应哪个页面，需要进一步商榷（如果沿用现有的 H5 请求参数，即问号及其后字符串 `?type=xx&yy=zz`，有可能部分地址，在短信中过长）
+
+1. 上述通过 URL 打开 APP，不适用于在 APP、浏览器内直接打开 URL，从而打开 APP
+
+1. IOS 个人发出的短信，例如含有地址，貌似不能带协议头，地址两端要有其他文本包裹，不然文本和地址会分开发。。。
+
+参考：
+
+1. [在Android中的用法](https://www.jianshu.com/p/4e006f9a7821)
+
+1. [iOS scheme跳转机制](https://www.jianshu.com/p/138b44833cda)
