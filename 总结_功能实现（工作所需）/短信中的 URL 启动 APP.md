@@ -31,19 +31,19 @@
 
 1. iOS scheme 设置（以下是假设性代码）：
 
+    > 设置 scheme 打开项目的 info.plist 文件，添加一个 scheme，相当于给宝箱设置一个开启密码，密码可以随便设置，所以 scheme 也可以随便设置，但是一般我们都设置同项目Bundle identifier一样
+
+    ![123](https://upload-images.jianshu.io/upload_images/2785125-156d2ee0ed8f1e3d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1000)
+
     ```
-    - (IBAction)jumpToPageOne:(id)sender {
-        NSString *urlString = @"http://acsing.kugou.com/app";
-        NSURL *url = [NSURL URLWithString:urlString];
-        if ([[UIApplication sharedApplication] canOpenURL:url]) {
-            [[UIApplication sharedApplication] openURL:url options:@{} completionHandler:^(BOOL success) {
-                
-            }];
-        }
-        else {
-            [self showMessage:@"没有该应用"];
-        }
-    }
+    /**
+     *  支付接口
+     *
+     *  @param orderStr       订单信息——该字符串从公司后台接口获取
+     *  @param schemeStr      调用支付的app注册在info.plist中的scheme
+     *  @param compltionBlock 支付结果回调Block，用于wap支付结果回调（非跳转钱包支付）
+     */
+    [[AlipaySDK defaultService] payOrder:signedString fromScheme:@"com.kugou.acsing" callback:nil];
     ```
 
 1. 后端添加跳转：
