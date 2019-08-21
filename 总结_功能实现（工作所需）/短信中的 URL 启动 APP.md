@@ -66,8 +66,23 @@
 
 1. IOS 个人发出的短信，例如含有地址，貌似不能带协议头，地址两端要有其他文本包裹，不然文本和地址会分开发。。。
 
+1. IOS 通用链相关：
+    1. 在 H5 中，IOS 系统下，A 页面想通过通用链启动 APP，必须跨域（即 A 页面域名和通用链的域名要不一样，至于为啥，也暂未知，听说是从 IOS 9.2 开始有这个规则）；
+    1. 如果客户端下载通用链配置文件失败，那么走通用链链接，是不会启动 APP 成功的；
+    1. IOS 9，通用链配置文件路径应为 `/apple-app-site-association`，IOS 9.3 开始，通用链配置文件路径应为 `/.well-known/apple-app-site-association`
+    1. 补充：IOS 客户端说，通用链的地址必须不能为 404，不然会启动 APP 失败（暂未考证）
+    1. 补充：IOS 客户端说，下载通用链走的协议，其实是 http（还是让服务器支持 https 和 http 安全些）
+
 参考：
 
 1. [在Android中的用法](https://www.jianshu.com/p/4e006f9a7821)
 
 1. [iOS scheme跳转机制](https://www.jianshu.com/p/138b44833cda)
+
+1. [Incoming requests for /.well-known/apple-app-site-association file](https://www.cnblogs.com/xilifeng/p/5382109.html)
+
+1. [通用链接(Universal Links)实践笔记](https://blog.csdn.net/leochang130731/article/details/60143994)
+
+1. [iOS 10 Universal Links(通用连接),从微信网页连接跳转到公司APP之官方指南翻译](https://blog.csdn.net/kuangdacaikuang/article/details/52955070)
+
+1. [iOS Universal Links(通用链接)](https://blog.csdn.net/yohunl/article/details/51036027)
