@@ -4,9 +4,9 @@
 
 环境：浏览器
 
-来源：[https://npmcdn.com/redux@3.5.2/dist/redux.min.js](https://npmcdn.com/redux@3.5.2/dist/redux.min.js)
+来源：[https://unpkg.com/redux@3.5.2/dist/redux.min.js](https://unpkg.com/redux@3.5.2/dist/redux.min.js)
 
-源码：[https://npmcdn.com/redux@3.5.2/dist/redux.js](https://npmcdn.com/redux@3.5.2/dist/redux.js)
+源码：[https://unpkg.com/redux@3.5.2/dist/redux.js](https://unpkg.com/redux@3.5.2/dist/redux.js)
 
 
 ## Redux 的 api
